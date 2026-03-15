@@ -29,10 +29,6 @@
                         {{ article.description|default("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries.") }}
                     </p>
 
-                    <p class="article-text small">
-                        {{ article.subtitle|default("the industry's standard dummy text ever since the 1500s.") }}
-                    </p>
-
                     <hr />
 
                     <h3 class="article-subtitle">
@@ -44,7 +40,8 @@
                     </h3>
                 </div>
 
-                <button class="article-btn" data-article-id="{{ article.id|default(1) }}">
+                <button class="article-btn"
+                        data-add-cart="{{ path('app_cart_add', {id: article.id}) }}">
                     AJOUTER AU PANIER
                 </button>
             </div>
@@ -84,12 +81,12 @@
                     {% include 'components/_article_card.html.twig' with {article: related, show_link: false} %}
                 {% else %}
                     {% for i in 8..11 %}
-                        <div class="article-card">
+                        <a href="{{ path('app_shop') }}" class="article-card">
                             <img src="{{ asset('img/image' ~ i ~ '.png') }}" alt="Article {{ i + 1 }}">
                             <h4>LOREM IPSUM</h4>
                             <p>Lorem Ipsum is simply dummy text of the printing and typesetting</p>
-                            <a href="#" class="article-add-to-cart">AJOUTER AU PANIER</a>
-                        </div>
+                            <span class="article-card-btn">AJOUTER AU PANIER</span>
+                        </a>
                     {% endfor %}
                 {% endfor %}
             </div>

@@ -65,8 +65,16 @@ class PublicController extends AbstractController
             throw $this->createNotFoundException('Article non trouvé');
         }
 
+        $related = $articleRepository->createQueryBuilder('a')
+            ->where('a.id != :id')
+            ->setParameter('id', $id)
+            ->setMaxResults(4)
+            ->getQuery()
+            ->getResult();
+
         return $this->render('public/achat.html.twig', [
             'article' => $article,
+            'related_articles' => $related,
             'artist' => [
                 'image' => 'img/artiste.jpg',
                 'biography' => "Biographie de l'artiste...",

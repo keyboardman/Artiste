@@ -1,7 +1,8 @@
-{# 
+{#
     Composant Panier (Cart)
     Overlay et panneau latéral du panier
 #}
+{% set cart = cart_data() %}
 
 {# Overlay sombre #}
 <div id="cart-overlay"></div>
@@ -14,24 +15,28 @@
     </div>
 
     <div class="cart-content">
-        {# Contenu quand le panier est vide #}
-        {% if cart is not defined or cart.items|default([])|length == 0 %}
+        {% if cart.items|default([])|length == 0 %}
             <div class="cart-empty">
                 <img src="{{ asset('img/cart-icon.png') }}" alt="Panier vide">
                 <p>Votre panier est vide</p>
                 <a href="{{ path('app_shop') }}" class="cart-btn">EXPLORER NOS PRODUITS</a>
             </div>
         {% else %}
-            {# Contenu quand le panier a des articles #}
             <div class="cart-items">
                 {% for item in cart.items %}
                     <div class="cart-item">
                         <img src="{{ asset(item.image) }}" alt="{{ item.name }}">
                         <div class="cart-item-info">
                             <h4>{{ item.name }}</h4>
-                            <p>{{ item.price|number_format(2, ',', ' ') }} €</p>
+                            <p>{{ item.price|number_format(2, ',', ' ') }} €
+                                {% if item.quantity > 1 %}
+                                    <span class="cart-item-qty">× {{ item.quantity }}</span>
+                                {% endif %}
+                            </p>
                         </div>
-                        <button class="remove-item" data-id="{{ item.id }}">✕</button>
+                        <form method="post" action="{{ path('app_cart_remove', {id: item.id}) }}">
+                            <button type="submit" class="remove-item">✕</button>
+                        </form>
                     </div>
                 {% endfor %}
             </div>

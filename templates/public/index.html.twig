@@ -41,9 +41,23 @@
                     alt="Notification"
                     class="bell-icon"
                 />
-                <a href="{{ path('app_profile') }}">
-                    <div class="account-w profile-account"></div>
-                </a>
+                {% if app.user %}
+                    <a href="{{ path('app_profile') }}" class="account-link">
+                        {% if app.user.avatar %}
+                            <img src="{{ asset(app.user.avatar) }}"
+                                 alt="Photo de profil"
+                                 class="account-w account-avatar">
+                        {% else %}
+                            <div class="account-w profile-account"></div>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="account-link">
+                        <div class="account-icon-w">
+                            <i class="fa-regular fa-user"></i>
+                        </div>
+                    </a>
+                {% endif %}
             </div>
         </div>
     </nav>

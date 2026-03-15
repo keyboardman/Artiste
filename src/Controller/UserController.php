@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Repository\ArticleRepository;
+use App\Service\CartService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -62,24 +65,33 @@ class UserController extends AbstractController
     }
 
     #[Route('/cart/add/{id}', name: 'app_cart_add', methods: ['POST'])]
-    public function cartAdd(int $id, Request $request): Response
+    public function cartAdd(int $id, Request $request, CartService $cartService, ArticleRepository $articleRepository): Response
     {
-        // TODO: Ajouter l'article au panier
-        // $cartService->add($id);
-        // $this->addFlash('success', 'Article ajouté au panier');
+        $article = $articleRepository->find($id);
 
-        // Retour à la page précédente ou au shop
+        if ($article) {
+            $cartService->add($article);
+        }
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse($cartService->getCart());
+        }
+
         $referer = $request->headers->get('referer');
         return $this->redirect($referer ?: $this->generateUrl('app_shop'));
     }
 
     #[Route('/cart/remove/{id}', name: 'app_cart_remove', methods: ['POST'])]
-    public function cartRemove(int $id): Response
+    public function cartRemove(int $id, CartService $cartService, Request $request): Response
     {
-        // TODO: Retirer l'article du panier
-        // $cartService->remove($id);
+        $cartService->remove($id);
 
-        return $this->redirectToRoute('app_cart');
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse($cartService->getCart());
+        }
+
+        $referer = $request->headers->get('referer');
+        return $this->redirect($referer ?: $this->generateUrl('app_shop'));
     }
 
     #[Route('/checkout', name: 'app_checkout')]

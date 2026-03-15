@@ -37,9 +37,23 @@
         
         <div class="{{ is_white ? 'extra-nav-w' : 'extra-nav' }}">
             <img src="{{ asset('img/bell-svgrepo-com.svg') }}" alt="Notification" class="bell-icon">
-            <a href="{{ path('app_profile') }}">
-                <div class="{{ is_white ? 'account-w profile-account' : 'account' }}"></div>
-            </a>
+            {% if app.user %}
+                <a href="{{ path('app_profile') }}" class="account-link">
+                    {% if app.user.avatar %}
+                        <img src="{{ asset(app.user.avatar) }}"
+                             alt="Photo de profil"
+                             class="{{ is_white ? 'account-w' : 'account' }} account-avatar">
+                    {% else %}
+                        <div class="{{ is_white ? 'account-w profile-account' : 'account' }}"></div>
+                    {% endif %}
+                </a>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="account-link">
+                    <div class="{{ is_white ? 'account-icon-w' : 'account-icon' }}">
+                        <i class="fa-regular fa-user"></i>
+                    </div>
+                </a>
+            {% endif %}
         </div>
     </div>
 </nav>

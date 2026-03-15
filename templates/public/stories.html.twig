@@ -13,9 +13,9 @@
 {% block content %}
     <main class="storie-main">
         <div class="storie-container">
-            <div class="squares-wrapper">
+            <div class="squares-wrapper" id="carousel-squares">
                 {% set positions = ['left-2', 'left-1', 'center', 'right-1', 'right-2'] %}
-                
+
                 {% for story in stories|default([]) %}
                     <div class="square square-{{ positions[loop.index0] }}"
                          {% if story.image is defined %}style="background-image: url('{{ asset(story.image) }}')"{% endif %}
@@ -28,6 +28,86 @@
                     {% endfor %}
                 {% endfor %}
             </div>
+
+            <div class="carousel-nav">
+                <button class="carousel-btn" id="carousel-prev" aria-label="Précédent">&#8592;</button>
+                <button class="carousel-btn" id="carousel-next" aria-label="Suivant">&#8594;</button>
+            </div>
+
+            <div class="carousel-dots" id="carousel-dots">
+                {% set count = stories|default([])|length %}
+                {% if count == 0 %}{% set count = 5 %}{% endif %}
+                {% for i in 1..count %}
+                    <div class="carousel-dot{% if i == 3 %} active{% endif %}"></div>
+                {% endfor %}
+            </div>
         </div>
     </main>
+
+    <script>
+    (function () {
+        const wrapper = document.getElementById('carousel-squares');
+        if (!wrapper) return;
+
+        const squares = Array.from(wrapper.querySelectorAll('.square'));
+        const positions = ['left-2', 'left-1', 'center', 'right-1', 'right-2'];
+        const total = squares.length;
+
+        // posIdx[i] = index dans positions[] pour squares[i]
+        let posIdx = squares.map((_, i) => i);
+
+        function updateClasses() {
+            squares.forEach((sq, i) => {
+                positions.forEach(p => sq.classList.remove('square-' + p));
+                sq.classList.add('square-' + positions[posIdx[i]]);
+            });
+            updateDots();
+        }
+
+        function rotate(dir) {
+            // dir = 1 → suivant (right-1 vient au centre), dir = -1 → précédent
+            posIdx = posIdx.map(idx => (idx - dir + total) % total);
+            updateClasses();
+        }
+
+        function updateDots() {
+            const dots = document.querySelectorAll('.carousel-dot');
+            if (!dots.length) return;
+            // Le carré qui est au centre (posIdx[i] === 2)
+            const centerSquareIdx = posIdx.indexOf(2);
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === centerSquareIdx));
+        }
+
+        // Clic sur les carrés latéraux
+        squares.forEach((sq, i) => {
+            sq.addEventListener('click', () => {
+                const p = posIdx[i];
+                if (p === 3 || p === 4) rotate(1);
+                else if (p === 0 || p === 1) rotate(-1);
+            });
+        });
+
+        // Boutons
+        const prevBtn = document.getElementById('carousel-prev');
+        const nextBtn = document.getElementById('carousel-next');
+        if (prevBtn) prevBtn.addEventListener('click', () => rotate(-1));
+        if (nextBtn) nextBtn.addEventListener('click', () => rotate(1));
+
+        // Dots
+        document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+            dot.addEventListener('click', () => {
+                const centerIdx = posIdx.indexOf(2);
+                const diff = i - centerIdx;
+                if (diff !== 0) rotate(diff > 0 ? 1 : -1);
+            });
+        });
+
+        // Auto-play toutes les 4s
+        let autoPlay = setInterval(() => rotate(1), 4000);
+        wrapper.addEventListener('mouseenter', () => clearInterval(autoPlay));
+        wrapper.addEventListener('mouseleave', () => { autoPlay = setInterval(() => rotate(1), 4000); });
+
+        updateDots();
+    })();
+    </script>
 {% endblock %}
