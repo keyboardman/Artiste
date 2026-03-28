@@ -18,6 +18,18 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class UserController extends AbstractController
 {
     
+    #[Route('/profile', name: 'app_profile')]
+    public function profile(): Response
+    {
+        $user = $this->getUser();
+
+        return $this->render('public/profile.html.twig', [
+            'user' => $user,
+            // 'boards' => $user->getBoards(),
+            // 'pins' => $user->getPins(),
+            // 'services' => $user->getServices(),
+        ]);
+    }
 
     #[Route('/article/upload', name: 'app_article_upload', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
@@ -118,20 +130,6 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/{id}', name: 'app_profile_public', requirements: ['id' => '\d+'])]
-    public function profilePublic(int $id): Response
-    {
-        // TODO: Récupérer l'utilisateur depuis la base de données
-        // $user = $userRepository->find($id);
-        // if (!$user) {
-        //     throw $this->createNotFoundException('Utilisateur non trouvé');
-        // }
-
-        return $this->render('public/profile.html.twig', [
-            // 'user' => $user,
-            // 'boards' => $user->getBoards(),
-        ]);
-    }
 
     #[Route('/cart', name: 'app_cart')]
     public function cart(Request $request): Response
