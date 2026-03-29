@@ -28,10 +28,9 @@ class PublicController extends AbstractController
     }
 
     #[Route('/galerie', name: 'app_galerie')]
-    public function galerie(): Response
+    public function galerie(ArticleRepository $articleRepository): Response
     {
-        // TODO: Récupérer les œuvres depuis la base de données
-        // $galleryItems = $galleryRepository->findAll();
+        $articles = $articleRepository->findBy([], ['createdAt' => 'DESC']);
 
         return $this->render('public/galerie.html.twig', [
             'categories' => [
@@ -40,9 +39,9 @@ class PublicController extends AbstractController
                 'Graphisme',
                 'Peinture',
                 'Digital Painting',
-                'Motion Design'
+                'Motion Design',
             ],
-            // 'gallery_items' => $galleryItems,
+            'articles' => $articles,
         ]);
     }
 

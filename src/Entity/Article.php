@@ -32,6 +32,9 @@ class Article
     #[ORM\Column(nullable: true)]
     private ?int $stock = null;
 
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $category = null;
+
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
@@ -114,6 +117,18 @@ class Article
     public function setStock(?int $stock): static
     {
         $this->stock = $stock;
+
+        return $this;
+    }
+
+    public function getCategory(): ?string
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?string $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

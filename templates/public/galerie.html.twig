@@ -10,8 +10,10 @@
     <section class="categories">
         {% set default_categories = ['Illustration', 'Photographie', 'Graphisme', 'Peinture', 'Digital Painting', 'Motion Design'] %}
 
+        <button class="category active" data-category="all">Tous</button>
+
         {% for category in categories|default(default_categories) %}
-            <button class="category{% if loop.first %} active{% endif %}"
+            <button class="category"
                     data-category="{{ category|lower|replace({' ': '-'}) }}">
                 {{ category }}
             </button>
@@ -20,8 +22,12 @@
 
     <section class="galerie">
         <div class="masonry">
-            {% for i in 1..20 %}
-                <div class="item"><img src="{{ asset('img/galerie-asset/img' ~ i ~ '.jpg') }}" alt="" /></div>
+            {% for article in articles %}
+                <div class="item" data-category="{{ article.category|lower|replace({' ': '-'}) }}">
+                    <img src="{{ asset(article.image) }}" alt="{{ article.title }}" />
+                </div>
+            {% else %}
+                <p class="galerie-empty">Aucune œuvre disponible pour le moment.</p>
             {% endfor %}
         </div>
     </section>

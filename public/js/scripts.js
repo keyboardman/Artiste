@@ -161,6 +161,21 @@ window.addEventListener('load', () => {
 
 window.addEventListener('resize', resizeAllMasonryItems);
 
+// Filtres galerie
+document.querySelectorAll('.category').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.category').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const selected = btn.dataset.category;
+    document.querySelectorAll('.masonry .item').forEach(item => {
+      item.style.display = (selected === 'all' || item.dataset.category === selected) ? '' : 'none';
+    });
+
+    resizeAllMasonryItems();
+  });
+});
+
 const imgoverlay = document.getElementById("image-overlay");
 const overlayImg = document.getElementById("overlay-img");
 
