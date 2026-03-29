@@ -53,24 +53,85 @@
 
     {# Grille des tableaux #}
     <section class="profile-board-grid">
+        {# Bouton créer toujours visible en premier #}
+        {% if app.user and app.user.id == user.id|default(null) %}
+            <div class="profile-board-card create-first" id="btn-create-board">
+                <span>+ Créer un tableau</span>
+            </div>
+        {% endif %}
+
         {% for board in boards|default([]) %}
-            <div class="profile-board-card" 
-                 {% if board.cover is defined %}style="background-image: url('{{ asset(board.cover) }}')"{% endif %}>
-                {% if board.title is defined %}
-                    <span>{{ board.title }}</span>
+            <div class="profile-board-card media-card"
+                 style="background-image: url('{{ asset(board.image) }}')">
+                <div class="media-title">{{ board.title }}</div>
+                {% if app.user and app.user.id == user.id|default(null) %}
+                    <form class="media-delete-form" method="post"
+                          action="{{ path('app_article_delete', {id: board.id}) }}"
+                          onsubmit="return confirm('Supprimer cette œuvre ?')">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_article_' ~ board.id) }}">
+                        <button type="submit" class="media-delete-btn" title="Supprimer">×</button>
+                    </form>
                 {% endif %}
             </div>
         {% else %}
-            {# État par défaut - premier tableau à créer #}
-            <div class="profile-board-card create-first">
-                <span>Créer un tableau</span>
-            </div>
-            {# Placeholders vides #}
+            {# Placeholders vides si aucun article (hors bouton créer) #}
+            {% if not (app.user and app.user.id == user.id|default(null)) %}
+                <div class="profile-board-card create-first">
+                    <span>Aucune œuvre</span>
+                </div>
+            {% endif %}
             {% for i in 1..5 %}
                 <div class="profile-board-card"></div>
             {% endfor %}
         {% endfor %}
     </section>
+
+    {# Modal upload #}
+    {% if app.user and app.user.id == user.id|default(null) %}
+    <div class="media-upload-modal" id="upload-modal" style="display:none;">
+        <div class="media-upload-modal-inner">
+            <button class="media-modal-close" id="modal-close">&times;</button>
+            <h3>Créer un tableau</h3>
+
+            <form class="media-upload-form" method="post"
+                  action="{{ path('app_article_upload') }}"
+                  enctype="multipart/form-data">
+
+                <label class="media-file-label">
+                    <div class="media-file-preview" id="file-preview">
+                        <span class="upload-icon">🖼️</span>
+                        <span>Cliquez pour choisir une image</span>
+                        <span class="upload-hint">JPG, PNG, GIF, WebP — max 10 Mo</span>
+                    </div>
+                    <input type="file" name="image" class="media-file-input" id="file-input"
+                           accept="image/jpeg,image/png,image/gif,image/webp" required>
+                </label>
+
+                <input type="text" name="title" placeholder="Titre de l'œuvre" required>
+
+                <input type="text" name="description" placeholder="Description (optionnel)">
+
+                <div class="field-row">
+                    <select name="category">
+                        <option value="">Catégorie</option>
+                        <option value="illustration">Illustration</option>
+                        <option value="photographie">Photographie</option>
+                        <option value="graphisme">Graphisme</option>
+                        <option value="peinture">Peinture</option>
+                        <option value="digital-painting">Digital Painting</option>
+                        <option value="motion-design">Motion Design</option>
+                    </select>
+
+                    <input type="text" name="price" placeholder="Prix en € (optionnel)"
+                           pattern="^\d+([.,]\d{1,2})?$">
+                </div>
+
+                <button type="submit" class="media-upload-submit">Publier l'œuvre</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
 
     {# Section Épingles (cachée par défaut) #}
     <section class="profile-pins-grid" style="display: none;">
@@ -102,6 +163,44 @@
 
 {% block javascripts %}
 <script>
+    // Modal upload
+    const uploadModal = document.getElementById('upload-modal');
+    const btnCreate   = document.getElementById('btn-create-board');
+    const modalClose  = document.getElementById('modal-close');
+    const fileInput   = document.getElementById('file-input');
+    const filePreview = document.getElementById('file-preview');
+
+    if (btnCreate && uploadModal) {
+        btnCreate.addEventListener('click', () => uploadModal.style.display = 'flex');
+        modalClose.addEventListener('click', () => uploadModal.style.display = 'none');
+        uploadModal.addEventListener('click', (e) => {
+            if (e.target === uploadModal) uploadModal.style.display = 'none';
+        });
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            if (file.size > 10 * 1024 * 1024) {
+                alert('L\'image dépasse 10 Mo. Veuillez choisir un fichier plus léger.');
+                fileInput.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                filePreview.style.backgroundImage = `url(${e.target.result})`;
+                filePreview.style.backgroundSize  = 'cover';
+                filePreview.style.backgroundPosition = 'center';
+                filePreview.classList.add('has-preview');
+                filePreview.querySelector('span').textContent = '';
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
     // Gestion des onglets du profil
     document.querySelectorAll('.section-btn').forEach(btn => {
         btn.addEventListener('click', function() {

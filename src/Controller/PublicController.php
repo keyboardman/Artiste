@@ -85,15 +85,14 @@ class PublicController extends AbstractController
     }
 
     #[Route('/profile', name: 'app_profile')]
-    public function profile(): Response
+    public function profile(ArticleRepository $articleRepository): Response
     {
         $user = $this->getUser();
+        $articles = $user ? $articleRepository->findBy(['user' => $user], ['createdAt' => 'DESC']) : [];
 
         return $this->render('public/profile.html.twig', [
             'user' => $user,
-            // 'boards' => $user->getBoards(),
-            // 'pins' => $user->getPins(),
-            // 'services' => $user->getServices(),
+            'boards' => $articles,
         ]);
     }
 

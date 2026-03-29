@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mon profil - Placeaupro{% endblock %}
+
+{% block body_class %}profile-edit-page{% endblock %}
+
+{% block responsive_css %}{% endblock %}
+
+{% block content %}
+<div class="pedit-wrap">
+
+    <div class="pedit-card">
+        <div class="pedit-header">
+            <a href="{{ path('app_profile') }}" class="pedit-back">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1>Modifier mon profil</h1>
+        </div>
+
+        {# Flash messages #}
+        {% for msg in app.flashes('success') %}
+            <div class="pedit-flash pedit-flash--success">{{ msg }}</div>
+        {% endfor %}
+        {% for msg in app.flashes('error') %}
+            <div class="pedit-flash pedit-flash--error">{{ msg }}</div>
+        {% endfor %}
+
+        <form class="pedit-form" method="post" enctype="multipart/form-data"
+              action="{{ path('app_profile_edit') }}">
+
+            {# ── Avatar ── #}
+            <div class="pedit-avatar-section">
+                <label class="pedit-avatar-label" for="avatar-input">
+                    <div class="pedit-avatar-preview" id="avatar-preview"
+                         {% if user.avatar %}style="background-image: url('{{ asset(user.avatar) }}')"{% endif %}>
+                        {% if not user.avatar %}
+                            <i class="fas fa-user"></i>
+                        {% endif %}
+                        <div class="pedit-avatar-overlay">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                </label>
+                <input type="file" id="avatar-input" name="avatar"
+                       accept="image/jpeg,image/png,image/gif,image/webp"
+                       class="pedit-hidden-input">
+                <p class="pedit-avatar-hint">JPG, PNG, WebP — max 5 Mo</p>
+            </div>
+
+            {# ── Informations personnelles ── #}
+            <div class="pedit-section-title">Informations personnelles</div>
+
+            <div class="pedit-row">
+                <div class="pedit-field">
+                    <label>Prénom</label>
+                    <input type="text" name="firstname"
+                           value="{{ user.firstname|default('') }}"
+                           placeholder="Votre prénom">
+                </div>
+                <div class="pedit-field">
+                    <label>Nom</label>
+                    <input type="text" name="lastname"
+                           value="{{ user.lastname|default('') }}"
+                           placeholder="Votre nom">
+                </div>
+            </div>
+
+            <div class="pedit-field">
+                <label>Pseudo affiché</label>
+                <input type="text" name="username"
+                       value="{{ user.username|default('') }}"
+                       placeholder="Votre pseudonyme">
+            </div>
+
+            <div class="pedit-field">
+                <label>Biographie</label>
+                <textarea name="bio" rows="4"
+                          placeholder="Parlez de vous, de votre style artistique…">{{ user.bio|default('') }}</textarea>
+            </div>
+
+            {# ── Compte ── #}
+            <div class="pedit-section-title">Compte</div>
+
+            <div class="pedit-field">
+                <label>Adresse e-mail</label>
+                <input type="email" name="email"
+                       value="{{ user.email|default('') }}"
+                       placeholder="votre@email.com">
+            </div>
+
+            <div class="pedit-field">
+                <label>Nouveau mot de passe <span class="pedit-optional">(laisser vide pour ne pas changer)</span></label>
+                <input type="password" name="new_password"
+                       placeholder="••••••••" autocomplete="new-password">
+            </div>
+
+            {# ── Actions ── #}
+            <div class="pedit-actions">
+                <a href="{{ path('app_profile') }}" class="pedit-btn pedit-btn--cancel">Annuler</a>
+                <button type="submit" class="pedit-btn pedit-btn--save">Enregistrer</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    // Preview avatar avant upload
+    const avatarInput   = document.getElementById('avatar-input');
+    const avatarPreview = document.getElementById('avatar-preview');
+
+    avatarInput.addEventListener('change', () => {
+        const file = avatarInput.files[0];
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+            alert('L\'image dépasse 5 Mo.');
+            avatarInput.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            avatarPreview.style.backgroundImage = `url(${e.target.result})`;
+            avatarPreview.querySelector('i')?.remove();
+        };
+        reader.readAsDataURL(file);
+    });
+</script>
+{% endblock %}

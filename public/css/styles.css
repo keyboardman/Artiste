@@ -801,6 +801,8 @@ body.home-page #windows .window-content img {
   height: 206px;
   border-radius: 50%;
   background-color: #c2d4d7;
+  background-size: cover;
+  background-position: center;
 }
 
 .profile-username {
@@ -978,61 +980,108 @@ body.home-page #windows .window-content img {
 .media-upload-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 16px;
 }
 
 .media-upload-modal-inner {
   background: #fff;
-  border-radius: 16px;
-  padding: 2em;
-  width: 420px;
+  border-radius: 20px;
+  padding: 32px 36px 28px;
+  width: 520px;
   max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
 }
 
 .media-upload-modal-inner h3 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 700;
   color: #002730;
+  letter-spacing: -0.3px;
 }
 
 .media-modal-close {
   position: absolute;
-  top: 12px;
-  right: 16px;
-  background: none;
+  top: 16px;
+  right: 20px;
+  background: #f2f4f5;
   border: none;
-  font-size: 24px;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
   cursor: pointer;
-  color: #666;
+  color: #444;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
 }
 
-.media-upload-form .form-group,
-.media-upload-form div {
+.media-modal-close:hover {
+  background: #e0e4e5;
+}
+
+.media-upload-form {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
 }
 
-.media-upload-form input[type="text"] {
-  border: 1px solid #d0d5dd;
-  border-radius: 8px;
-  padding: 10px 14px;
+.media-upload-form input[type="text"],
+.media-upload-form select {
+  width: 100%;
+  border: 1.5px solid #e2e6ea;
+  border-radius: 10px;
+  padding: 11px 14px;
   font-size: 14px;
+  font-family: inherit;
+  color: #1a2e30;
+  background: #fafbfc;
   outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.media-upload-form input[type="text"]:focus {
+.media-upload-form input[type="text"]:focus,
+.media-upload-form select:focus {
   border-color: #406f76;
+  box-shadow: 0 0 0 3px rgba(64, 111, 118, 0.12);
+  background: #fff;
+}
+
+.media-upload-form select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23406f76' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.media-upload-form .field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.media-upload-form .field-hint {
+  font-size: 11px;
+  color: #8a9ba0;
+  margin-top: 2px;
 }
 
 .media-file-label {
@@ -1046,36 +1095,304 @@ body.home-page #windows .window-content img {
 
 .media-file-preview {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 180px;
+  gap: 10px;
+  height: 200px;
   border: 2px dashed #b0c4c8;
-  border-radius: 10px;
+  border-radius: 12px;
   color: #406f76;
-  font-size: 15px;
-  transition: border-color 0.2s;
+  font-size: 14px;
+  transition: border-color 0.2s, background 0.2s;
   text-align: center;
+  background: #f5f9fa;
+}
+
+.media-file-preview:hover {
+  border-color: #406f76;
+  background: #edf4f5;
+}
+
+.media-file-preview .upload-icon {
+  font-size: 28px;
+  opacity: 0.6;
+}
+
+.media-file-preview .upload-hint {
+  font-size: 11px;
+  color: #8a9ba0;
 }
 
 .media-file-preview.has-preview {
-  color: transparent;
   border-color: transparent;
+  background: transparent;
 }
 
 .media-upload-submit {
   background: #002730;
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: 10px;
+  padding: 13px;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
+  font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0.3px;
+  margin-top: 4px;
 }
 
 .media-upload-submit:hover {
   background: #003d4d;
+}
+
+.media-upload-submit:active {
+  transform: scale(0.98);
+}
+
+/* ============================================== PROFILE EDIT PAGE ===============================================*/
+
+body.profile-edit-page {
+  background: #f4f6f7;
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+body.profile-edit-page .achat-header {
+  background: #fff;
+  border-bottom: 1px solid #e8ecee;
+  box-shadow: 0 1px 8px rgba(0, 39, 48, 0.06);
+}
+
+body.profile-edit-page .main-nav {
+  margin-bottom: 0;
+}
+
+body.profile-edit-page .pedit-wrap {
+  padding-top: 120px;
+}
+
+.pedit-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.pedit-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 36px 40px;
+  box-shadow: 0 4px 32px rgba(0, 39, 48, 0.08);
+}
+
+.pedit-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.pedit-back {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #f0f4f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #002730;
+  text-decoration: none;
+  font-size: 15px;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.pedit-back:hover {
+  background: #dde7e9;
+}
+
+.pedit-header h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #002730;
+}
+
+.pedit-flash {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.pedit-flash--success {
+  background: #e6f4f1;
+  color: #1a6e5a;
+}
+
+.pedit-flash--error {
+  background: #fdecea;
+  color: #9b2c2c;
+}
+
+/* Avatar */
+.pedit-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.pedit-avatar-label {
+  cursor: pointer;
+}
+
+.pedit-avatar-preview {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: #dde7e9 center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  color: #406f76;
+  position: relative;
+  overflow: hidden;
+}
+
+.pedit-avatar-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 39, 48, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.pedit-avatar-label:hover .pedit-avatar-overlay {
+  opacity: 1;
+}
+
+.pedit-avatar-hint {
+  font-size: 12px;
+  color: #8a9ba0;
+  margin: 0;
+}
+
+.pedit-hidden-input {
+  display: none;
+}
+
+/* Sections */
+.pedit-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #8a9ba0;
+  margin: 24px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eef0f1;
+}
+
+.pedit-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.pedit-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pedit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.pedit-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3a4f52;
+}
+
+.pedit-optional {
+  font-weight: 400;
+  color: #8a9ba0;
+}
+
+.pedit-field input,
+.pedit-field textarea {
+  border: 1.5px solid #e2e6ea;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1a2e30;
+  background: #fafbfc;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: vertical;
+}
+
+.pedit-field input:focus,
+.pedit-field textarea:focus {
+  border-color: #406f76;
+  box-shadow: 0 0 0 3px rgba(64, 111, 118, 0.12);
+  background: #fff;
+}
+
+/* Actions */
+.pedit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.pedit-btn {
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.pedit-btn--cancel {
+  background: #f0f4f5;
+  color: #3a4f52;
+}
+
+.pedit-btn--cancel:hover {
+  background: #dde7e9;
+}
+
+.pedit-btn--save {
+  background: #002730;
+  color: #fff;
+}
+
+.pedit-btn--save:hover {
+  background: #003d4d;
+}
+
+.pedit-btn--save:active {
+  transform: scale(0.98);
 }
 
 /* ============================================== LOGIN PAGE ===============================================*/
