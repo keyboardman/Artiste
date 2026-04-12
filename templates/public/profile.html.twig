@@ -89,46 +89,23 @@
 
     {# Modal upload #}
     {% if app.user and app.user.id == user.id|default(null) %}
+    <link rel="stylesheet" href="{{ asset('@symfony/ux-dropzone/style.min.css') }}">
     <div class="media-upload-modal" id="upload-modal" style="display:none;">
         <div class="media-upload-modal-inner">
             <button class="media-modal-close" id="modal-close">&times;</button>
             <h3>Créer un tableau</h3>
 
-            <form class="media-upload-form" method="post"
-                  action="{{ path('app_article_upload') }}"
-                  enctype="multipart/form-data">
-
-                <label class="media-file-label">
-                    <div class="media-file-preview" id="file-preview">
-                        <span class="upload-icon">🖼️</span>
-                        <span>Cliquez pour choisir une image</span>
-                        <span class="upload-hint">JPG, PNG, GIF, WebP — max 10 Mo</span>
-                    </div>
-                    <input type="file" name="image" class="media-file-input" id="file-input"
-                           accept="image/jpeg,image/png,image/gif,image/webp" required>
-                </label>
-
-                <input type="text" name="title" placeholder="Titre de l'œuvre" required>
-
-                <input type="text" name="description" placeholder="Description (optionnel)">
-
+            {{ form_start(uploadForm, {attr: {class: 'media-upload-form'}}) }}
+                {{ form_widget(uploadForm.image) }}
+                {{ form_widget(uploadForm.title, {attr: {class: 'upload-input'}}) }}
+                {{ form_widget(uploadForm.description, {attr: {class: 'upload-input'}}) }}
                 <div class="field-row">
-                    <select name="category">
-                        <option value="">Catégorie</option>
-                        <option value="illustration">Illustration</option>
-                        <option value="photographie">Photographie</option>
-                        <option value="graphisme">Graphisme</option>
-                        <option value="peinture">Peinture</option>
-                        <option value="digital-painting">Digital Painting</option>
-                        <option value="motion-design">Motion Design</option>
-                    </select>
-
-                    <input type="text" name="price" placeholder="Prix en € (optionnel)"
-                           pattern="^\d+([.,]\d{1,2})?$">
+                    {{ form_widget(uploadForm.category) }}
+                    {{ form_widget(uploadForm.price, {attr: {class: 'upload-input'}}) }}
                 </div>
-
+                {{ form_errors(uploadForm) }}
                 <button type="submit" class="media-upload-submit">Publier l'œuvre</button>
-            </form>
+            {{ form_end(uploadForm) }}
         </div>
     </div>
     {% endif %}
@@ -167,37 +144,12 @@
     const uploadModal = document.getElementById('upload-modal');
     const btnCreate   = document.getElementById('btn-create-board');
     const modalClose  = document.getElementById('modal-close');
-    const fileInput   = document.getElementById('file-input');
-    const filePreview = document.getElementById('file-preview');
 
     if (btnCreate && uploadModal) {
         btnCreate.addEventListener('click', () => uploadModal.style.display = 'flex');
         modalClose.addEventListener('click', () => uploadModal.style.display = 'none');
         uploadModal.addEventListener('click', (e) => {
             if (e.target === uploadModal) uploadModal.style.display = 'none';
-        });
-    }
-
-    if (fileInput) {
-        fileInput.addEventListener('change', () => {
-            const file = fileInput.files[0];
-            if (!file) return;
-
-            if (file.size > 10 * 1024 * 1024) {
-                alert('L\'image dépasse 10 Mo. Veuillez choisir un fichier plus léger.');
-                fileInput.value = '';
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                filePreview.style.backgroundImage = `url(${e.target.result})`;
-                filePreview.style.backgroundSize  = 'cover';
-                filePreview.style.backgroundPosition = 'center';
-                filePreview.classList.add('has-preview');
-                filePreview.querySelector('span').textContent = '';
-            };
-            reader.readAsDataURL(file);
         });
     }
 

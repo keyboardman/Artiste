@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Entity\Article;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CartService
@@ -11,19 +10,19 @@ class CartService
 
     public function __construct(private RequestStack $requestStack) {}
 
-    public function add(Article $article): void
+    public function add(array $article): void
     {
         $cart = $this->getCartRaw();
-        $id = $article->getId();
+        $id = $article['id'];
 
         if (isset($cart[$id])) {
             $cart[$id]['quantity']++;
         } else {
             $cart[$id] = [
                 'id'       => $id,
-                'name'     => $article->getTitle(),
-                'image'    => $article->getImage(),
-                'price'    => $article->getPrice(),
+                'name'     => $article['title'],
+                'image'    => $article['image'],
+                'price'    => $article['price'],
                 'quantity' => 1,
             ];
         }
