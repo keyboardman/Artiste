@@ -119,13 +119,27 @@ class UserController extends AbstractController
     #[Route('/profile/{id}', name: 'app_profile_public', requirements: ['id' => '\d+'])]
     public function profilePublic(int $id): Response
     {
-        return $this->render('public/profile.html.twig');
+        // TODO: Récupérer l'utilisateur depuis la base de données
+        // $user = $userRepository->find($id);
+        // if (!$user) {
+        //     throw $this->createNotFoundException('Utilisateur non trouvé');
+        // }
+
+        return $this->render('public/profile.html.twig', [
+            // 'user' => $user,
+            // 'boards' => $user->getBoards(),
+        ]);
     }
 
     #[Route('/cart', name: 'app_cart')]
     public function cart(Request $request): Response
     {
-        return $this->render('public/cart.html.twig');
+        // TODO: Récupérer le panier depuis la session
+        // $cart = $cartService->getCart();
+
+        return $this->render('public/cart.html.twig', [
+            // 'cart' => $cart,
+        ]);
     }
 
     #[Route('/cart/add/{id}', name: 'app_cart_add', methods: ['POST'])]
@@ -162,13 +176,25 @@ class UserController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function checkout(): Response
     {
-        return $this->render('public/checkout.html.twig');
+        // TODO: Afficher la page de paiement
+        // $cart = $cartService->getCart();
+
+        return $this->render('public/checkout.html.twig', [
+            // 'cart' => $cart,
+        ]);
     }
 
     #[Route('/orders', name: 'app_orders')]
     #[IsGranted('ROLE_USER')]
     public function orders(): Response
     {
-        return $this->render('public/orders.html.twig');
+        $user = $this->getUser();
+
+        // TODO: Récupérer les commandes de l'utilisateur
+        // $orders = $orderRepository->findByUser($user);
+
+        return $this->render('public/orders.html.twig', [
+            // 'orders' => $orders,
+        ]);
     }
 }
