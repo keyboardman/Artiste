@@ -26,3 +26,4 @@
 .idea/modules.xml
 .idea/material_theme_project_new.xml
 .env.prod
+.php-version
