@@ -2,41 +2,62 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ArticleRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+#[ApiResource(
+    paginationEnabled: false,
+    normalizationContext: ['groups' => ['article:read']],
+    denormalizationContext: ['groups' => ['article:write']],
+)]
+#[ApiFilter(SearchFilter::class, properties: ['user' => 'exact', 'category' => 'exact'])]
+#[ApiFilter(OrderFilter::class, properties: ['createdAt', 'id'])]
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['article:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['article:read', 'article:write'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['article:read', 'article:write'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 500)]
+    #[Groups(['article:read', 'article:write'])]
     private ?string $image = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Groups(['article:read', 'article:write'])]
     private ?string $price = null;
 
     #[ORM\Column]
+    #[Groups(['article:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['article:read', 'article:write'])]
     private ?int $stock = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(['article:read', 'article:write'])]
     private ?string $category = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['article:read', 'article:write'])]
     private ?User $user = null;
 
     public function __construct()

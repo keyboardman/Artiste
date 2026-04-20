@@ -6,9 +6,7 @@ use App\Entity\Article;
 use App\Entity\User;
 use App\Form\ArticleType;
 use App\Form\UserType;
-use App\Repository\ArticleRepository;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\ApiClientService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,12 +18,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AdminController extends AbstractController
 {
     #[Route('/', name: 'app_admin_dashboard')]
-    public function dashboard(UserRepository $userRepository, ArticleRepository $articleRepository): Response
+    public function dashboard(ApiClientService $api): Response
     {
+        $users = $api->getUsers(['order[id]' => 'DESC']);
+        $articles = $api->getArticles();
+
         $stats = [
-            'users' => $userRepository->count([]),
-            'articles' => $articleRepository->count([]),
-            'recent_users' => $userRepository->findBy([], ['id' => 'DESC'], 5),
+            'users'        => count($users),
+            'articles'     => count($articles),
+            'recent_users' => array_slice($users, 0, 5),
         ];
 
         return $this->render('admin/dashboard.html.twig', [
@@ -36,9 +37,9 @@ class AdminController extends AbstractController
     // ===== GESTION DES UTILISATEURS =====
 
     #[Route('/users', name: 'app_admin_users')]
-    public function users(UserRepository $userRepository): Response
+    public function users(ApiClientService $api): Response
     {
-        $users = $userRepository->findAll();
+        $users = $api->getUsers();
 
         return $this->render('admin/users/index.html.twig', [
             'users' => $users,
@@ -54,13 +55,21 @@ class AdminController extends AbstractController
     }
 
     #[Route('/users/{id}/edit', name: 'app_admin_user_edit', requirements: ['id' => '\d+'])]
-    public function userEdit(User $user, Request $request, EntityManagerInterface $entityManager): Response
+    public function userEdit(User $user, Request $request, ApiClientService $api): Response
     {
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $api->updateUser($user->getId(), [
+                'email'     => $user->getEmail(),
+                'firstname' => $user->getFirstname(),
+                'lastname'  => $user->getLastname(),
+                'username'  => $user->getUsername(),
+                'bio'       => $user->getBio(),
+                'avatar'    => $user->getAvatar(),
+                'roles'     => $user->getRoles(),
+            ]);
 
             $this->addFlash('success', 'L\'utilisateur a été modifié avec succès.');
 
@@ -74,11 +83,10 @@ class AdminController extends AbstractController
     }
 
     #[Route('/users/{id}/delete', name: 'app_admin_user_delete', methods: ['POST'])]
-    public function userDelete(User $user, Request $request, EntityManagerInterface $entityManager): Response
+    public function userDelete(User $user, Request $request, ApiClientService $api): Response
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($user);
-            $entityManager->flush();
+            $api->deleteUser($user->getId());
 
             $this->addFlash('success', 'L\'utilisateur a été supprimé avec succès.');
         }
@@ -89,9 +97,9 @@ class AdminController extends AbstractController
     // ===== GESTION DES ARTICLES =====
 
     #[Route('/articles', name: 'app_admin_articles')]
-    public function articles(ArticleRepository $articleRepository): Response
+    public function articles(ApiClientService $api): Response
     {
-        $articles = $articleRepository->findAll();
+        $articles = $api->getArticles();
 
         return $this->render('admin/articles/index.html.twig', [
             'articles' => $articles,
@@ -99,15 +107,21 @@ class AdminController extends AbstractController
     }
 
     #[Route('/articles/new', name: 'app_admin_article_new')]
-    public function articleNew(Request $request, EntityManagerInterface $entityManager): Response
+    public function articleNew(Request $request, ApiClientService $api): Response
     {
         $article = new Article();
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($article);
-            $entityManager->flush();
+            $api->createArticle([
+                'title'       => $article->getTitle(),
+                'description' => $article->getDescription(),
+                'image'       => $article->getImage(),
+                'price'       => $article->getPrice(),
+                'stock'       => $article->getStock(),
+                'category'    => $article->getCategory(),
+            ]);
 
             $this->addFlash('success', 'L\'article a été créé avec succès.');
 
@@ -120,13 +134,20 @@ class AdminController extends AbstractController
     }
 
     #[Route('/articles/{id}/edit', name: 'app_admin_article_edit', requirements: ['id' => '\d+'])]
-    public function articleEdit(Article $article, Request $request, EntityManagerInterface $entityManager): Response
+    public function articleEdit(Article $article, Request $request, ApiClientService $api): Response
     {
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $api->updateArticle($article->getId(), [
+                'title'       => $article->getTitle(),
+                'description' => $article->getDescription(),
+                'image'       => $article->getImage(),
+                'price'       => $article->getPrice(),
+                'stock'       => $article->getStock(),
+                'category'    => $article->getCategory(),
+            ]);
 
             $this->addFlash('success', 'L\'article a été modifié avec succès.');
 
@@ -135,16 +156,15 @@ class AdminController extends AbstractController
 
         return $this->render('admin/articles/edit.html.twig', [
             'article' => $article,
-            'form' => $form,
+            'form'    => $form,
         ]);
     }
 
     #[Route('/articles/{id}/delete', name: 'app_admin_article_delete', methods: ['POST'])]
-    public function articleDelete(Article $article, Request $request, EntityManagerInterface $entityManager): Response
+    public function articleDelete(Article $article, Request $request, ApiClientService $api): Response
     {
         if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($article);
-            $entityManager->flush();
+            $api->deleteArticle($article->getId());
 
             $this->addFlash('success', 'L\'article a été supprimé avec succès.');
         }
@@ -157,31 +177,18 @@ class AdminController extends AbstractController
     #[Route('/orders', name: 'app_admin_orders')]
     public function orders(): Response
     {
-        // TODO: Récupérer toutes les commandes
-        // $orders = $orderRepository->findBy([], ['createdAt' => 'DESC']);
-
-        return $this->render('admin/orders/index.html.twig', [
-            // 'orders' => $orders,
-        ]);
+        return $this->render('admin/orders/index.html.twig');
     }
 
     #[Route('/orders/{id}', name: 'app_admin_order_show', requirements: ['id' => '\d+'])]
     public function orderShow(int $id): Response
     {
-        // TODO: Afficher une commande
-
-        return $this->render('admin/orders/show.html.twig', [
-            // 'order' => $order,
-        ]);
+        return $this->render('admin/orders/show.html.twig');
     }
 
     #[Route('/orders/{id}/status', name: 'app_admin_order_status', methods: ['POST'])]
     public function orderStatus(int $id, Request $request): Response
     {
-        // TODO: Mettre à jour le statut d'une commande
-        // $order->setStatus($request->request->get('status'));
-        // $entityManager->flush();
-
         return $this->redirectToRoute('app_admin_order_show', ['id' => $id]);
     }
 

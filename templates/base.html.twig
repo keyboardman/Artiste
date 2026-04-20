@@ -42,6 +42,23 @@
         {% include 'components/_cart.html.twig' %}
     {% endblock %}
     
+    {# ===== MESSAGES FLASH ===== #}
+    {% for type, messages in app.flashes(['success', 'error', 'warning', 'info']) %}
+        {% for message in messages %}
+            <div class="flash-message flash-{{ type }}" style="
+                position: fixed; top: 80px; right: 20px; z-index: 9999;
+                padding: 12px 20px; border-radius: 8px; font-size: 14px;
+                background: {{ type == 'success' ? '#4caf50' : (type == 'error' ? '#f44336' : '#2196f3') }};
+                color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                animation: fadeOut 5s forwards;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    <style>
+        @keyframes fadeOut { 0%{opacity:1} 80%{opacity:1} 100%{opacity:0;pointer-events:none} }
+    </style>
+
     {# ===== CONTENU PRINCIPAL ===== #}
     {% block body %}
         <main>
@@ -55,6 +72,7 @@
     {% endblock %}
     
     {# ===== SCRIPTS ===== #}
+    {{ importmap('app') }}
     <script src="{{ asset('js/scripts.js') }}"></script>
     {% block javascripts %}{% endblock %}
 </body>
