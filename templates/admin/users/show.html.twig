@@ -76,7 +76,7 @@
                 </div>
                 <div class="card-body text-center">
                     {% if user.avatar %}
-                        <img src="{{ user.avatar }}" alt="Avatar de {{ user.email }}" class="img-fluid rounded-circle" style="max-width: 200px;">
+                        <img src="{{ asset(user.avatar) }}" alt="Avatar de {{ user.email }}" class="img-fluid rounded-circle" style="max-width: 200px;">
                     {% else %}
                         <div class="bg-secondary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 200px; height: 200px; font-size: 4rem;">
                             <i class="fas fa-user"></i>

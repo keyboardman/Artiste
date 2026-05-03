@@ -76,6 +76,11 @@ class UserController extends AbstractController
         $user = $this->getUser();
 
         if ($request->isMethod('POST')) {
+            if (!$this->isCsrfTokenValid('profile_edit', $request->request->get('_token'))) {
+                $this->addFlash('error', 'Token de sécurité invalide.');
+                return $this->redirectToRoute('app_profile_edit');
+            }
+
             $updateData = [
                 'username'  => $request->request->get('username', $user->getUsername()),
                 'firstname' => $request->request->get('firstname', $user->getFirstname()),

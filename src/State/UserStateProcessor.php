@@ -17,10 +17,17 @@ class UserStateProcessor implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
-        if ($data instanceof User && $data->getPlainPassword() !== null) {
-            $data->setPassword(
-                $this->passwordHasher->hashPassword($data, $data->getPlainPassword())
-            );
+        if ($data instanceof User) {
+            if ($data->getPlainPassword() !== null) {
+                $data->setPassword(
+                    $this->passwordHasher->hashPassword($data, $data->getPlainPassword())
+                );
+            }
+
+            $avatar = $data->getAvatar();
+            if ($avatar !== null && !preg_match('#^uploads/#', $avatar)) {
+                $data->setAvatar(null);
+            }
         }
 
         $this->em->persist($data);

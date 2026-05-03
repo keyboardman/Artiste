@@ -28,6 +28,8 @@
         <form class="pedit-form" method="post" enctype="multipart/form-data"
               action="{{ path('app_profile_edit') }}">
 
+            <input type="hidden" name="_token" value="{{ csrf_token('profile_edit') }}">
+
             {# ── Avatar ── #}
             <div class="pedit-avatar-section">
                 <label class="pedit-avatar-label" for="avatar-input">
