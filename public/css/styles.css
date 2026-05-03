@@ -175,12 +175,18 @@ body.home-page #windows .window-content img {
   flex-wrap: wrap;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-links button {
   color: #406f76;
   font-size: 14px;
   display: flex;
   align-items: center;
   text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .nav-input {
@@ -679,12 +685,18 @@ body.home-page #windows .window-content img {
   flex-wrap: wrap;
 }
 
-.nav-links-w a {
+.nav-links-w a,
+.nav-links-w button {
   color: #fff;
   font-size: 14px;
   display: flex;
   align-items: center;
   text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .nav-input-w {
@@ -910,6 +922,7 @@ body.home-page #windows .window-content img {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 /* ============================================== MEDIA GALLERY ===============================================*/

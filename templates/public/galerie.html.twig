@@ -24,7 +24,7 @@
         <div class="masonry">
             {% for article in articles %}
                 <div class="item" data-category="{{ article.category|lower|replace({' ': '-'}) }}">
-                    <img src="{{ asset(article.image) }}" alt="{{ article.title }}" />
+                    <img src="{{ article.image|imagine_filter('galerie_thumb') }}" alt="{{ article.title }}" loading="lazy" />
                 </div>
             {% else %}
                 <p class="galerie-empty">Aucune œuvre disponible pour le moment.</p>

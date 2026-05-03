@@ -33,7 +33,7 @@
         <a href="{{ path('app_shop') }}" {% if app.request.attributes.get('_route') == 'app_shop' %}class="active"{% endif %}>SHOP</a>
         <a href="{{ path('app_galerie') }}" {% if app.request.attributes.get('_route') == 'app_galerie' %}class="active"{% endif %}>GALERIE</a>
         <a href="{{ path('app_stories') }}" {% if app.request.attributes.get('_route') == 'app_stories' %}class="active"{% endif %}>STORIES</a>
-        <a href="#" id="cart-btn">PANIER</a>
+        <button type="button" id="cart-btn">PANIER</button>
         
         <div class="{{ is_white ? 'extra-nav-w' : 'extra-nav' }}">
             <img src="{{ asset('img/bell-svgrepo-com.svg') }}" alt="Notification" class="bell-icon">

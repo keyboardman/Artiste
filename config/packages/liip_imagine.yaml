@@ -1,0 +1,19 @@
+liip_imagine:
+    driver: "gd"
+    resolvers:
+        default:
+            web_path:
+                web_root: "%kernel.project_dir%/public"
+                cache_prefix: "media/cache"
+    loaders:
+        default:
+            filesystem:
+                data_root: "%kernel.project_dir%/public"
+    cache: default
+    filter_sets:
+        galerie_thumb:
+            quality: 80
+            filters:
+                thumbnail:
+                    size: [800, 1200]
+                    mode: inset

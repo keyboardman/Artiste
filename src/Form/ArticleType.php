@@ -36,7 +36,7 @@ class ArticleType extends AbstractType
             ])
             ->add('category', ChoiceType::class, [
                 'label' => 'Catégorie',
-                'required' => false,
+                'required' => true,
                 'placeholder' => '-- Choisir une catégorie --',
                 'choices' => [
                     'Illustration'     => 'illustration',
@@ -46,7 +46,7 @@ class ArticleType extends AbstractType
                     'Digital Painting' => 'digital-painting',
                     'Motion Design'    => 'motion-design',
                 ],
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
             ])
             ->add('stock', IntegerType::class, [
                 'label' => 'Stock',

@@ -43,7 +43,7 @@ class ArticleUploadType extends AbstractType
             ])
             ->add('category', ChoiceType::class, [
                 'label'       => false,
-                'required'    => false,
+                'required'    => true,
                 'placeholder' => 'Catégorie',
                 'choices'     => [
                     'Illustration'     => 'illustration',
@@ -53,6 +53,7 @@ class ArticleUploadType extends AbstractType
                     'Digital Painting' => 'digital-painting',
                     'Motion Design'    => 'motion-design',
                 ],
+                'constraints' => [new NotBlank(message: 'La catégorie est requise.')],
             ])
             ->add('price', TextType::class, [
                 'label'    => false,

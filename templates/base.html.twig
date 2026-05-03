@@ -73,7 +73,7 @@
     
     {# ===== SCRIPTS ===== #}
     {{ importmap('app') }}
-    <script src="{{ asset('js/scripts.js') }}"></script>
+    <script src="{{ asset('js/scripts.js') }}" data-turbo-eval="false"></script>
     {% block javascripts %}{% endblock %}
 </body>
 </html>

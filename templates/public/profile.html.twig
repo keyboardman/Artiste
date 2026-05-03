@@ -31,7 +31,7 @@
     {# Boutons d'édition #}
     <section class="profile-actions">
         {% if app.user and app.user.id == user.id|default(null) %}
-            <a href="{{ path('app_profile_edit') }}" class="btn-edit-profile">Edit profil</a>
+            <a href="{{ path('app_profile_edit') }}" class="btn-edit-profile">Modifier son profil</a>
         {% else %}
             <button class="btn-edit-profile btn-follow" data-user-id="{{ user.id|default(1) }}">Suivre</button>
         {% endif %}
@@ -40,7 +40,7 @@
 
     {# Sections du profil #}
     <section class="profile-sections">
-        {% set sections = ['Tableau', 'Epingle', 'Service', 'About'] %}
+        {% set sections = ['Ma galerie', 'Epingle', 'Service', 'About'] %}
         {% for section in sections %}
             <button class="section-btn{% if loop.first %} active{% endif %}" 
                     data-section="{{ section|lower }}">
@@ -56,7 +56,7 @@
         {# Bouton créer toujours visible en premier #}
         {% if app.user and app.user.id == user.id|default(null) %}
             <div class="profile-board-card create-first" id="btn-create-board">
-                <span>+ Créer un tableau</span>
+                <span>Ajouter une image à ma galerie</span>
             </div>
         {% endif %}
 
@@ -93,7 +93,7 @@
     <div class="media-upload-modal" id="upload-modal" style="display:none;">
         <div class="media-upload-modal-inner">
             <button class="media-modal-close" id="modal-close">&times;</button>
-            <h3>Créer un tableau</h3>
+            <h3>Ajouter une image à ma galerie</h3>
 
             {{ form_start(uploadForm, {attr: {class: 'media-upload-form'}}) }}
                 {{ form_widget(uploadForm.image) }}
@@ -167,7 +167,7 @@
             // Afficher la section correspondante
             const sectionName = this.dataset.section;
             const sectionMap = {
-                'tableau': '.profile-board-grid',
+                'ma galerie': '.profile-board-grid',
                 'epingle': '.profile-pins-grid',
                 'service': '.profile-services',
                 'about': '.profile-about'
