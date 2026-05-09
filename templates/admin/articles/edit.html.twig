@@ -85,6 +85,45 @@
                 </div>
             </div>
 
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Galerie d'images additionnelles</h5>
+                </div>
+                <div class="card-body">
+                    {% if article.images|length > 0 %}
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            {% for img in article.images %}
+                                <div style="position:relative;">
+                                    <img src="{{ asset(img.path) }}" alt="" style="width:80px;height:80px;object-fit:cover;border-radius:4px;">
+                                    <form method="post" action="{{ path('app_admin_article_image_delete', {id: img.id}) }}"
+                                          style="position:absolute;top:-6px;right:-6px;"
+                                          onsubmit="return confirm('Supprimer cette image ?')">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('article_image_delete_' ~ img.id) }}">
+                                        <button type="submit" class="btn btn-danger btn-sm" style="border-radius:50%;width:24px;height:24px;padding:0;line-height:1;">×</button>
+                                    </form>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted small mb-3">Aucune image additionnelle.</p>
+                    {% endif %}
+
+                    <form method="post"
+                          action="{{ path('app_admin_article_image_add', {id: article.id}) }}"
+                          enctype="multipart/form-data">
+                        <input type="hidden" name="_token" value="{{ csrf_token('article_image_add_' ~ article.id) }}">
+                        <div class="mb-2">
+                            <input type="file" name="images[]" multiple
+                                   accept="image/jpeg,image/png,image/gif,image/webp"
+                                   class="form-control form-control-sm">
+                        </div>
+                        <button type="submit" class="btn btn-sm btn-primary w-100">
+                            <i class="fas fa-upload"></i> Ajouter
+                        </button>
+                    </form>
+                </div>
+            </div>
+
             <div class="card border-danger">
                 <div class="card-header bg-danger text-white">
                     <h5 class="mb-0">Zone dangereuse</h5>

@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ artist.displayName }} - Placeaupro{% endblock %}
+
+{% block body_class %}artist-page{% endblock %}
+
+{% block nav_style %}white{% endblock %}
+
+{% block responsive_css %}{% endblock %}
+
+{% block content %}
+    <main style="max-width:1100px;margin:120px auto 60px;padding:0 20px;">
+
+        {# En-tête de l'artiste #}
+        <section style="display:flex;gap:32px;align-items:center;flex-wrap:wrap;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid #eee;">
+            {% if artist.avatar %}
+                <img src="{{ asset(artist.avatar) }}" alt="{{ artist.displayName }}"
+                     style="width:140px;height:140px;border-radius:50%;object-fit:cover;">
+            {% else %}
+                <div style="width:140px;height:140px;border-radius:50%;background:#c2d4d7;display:flex;align-items:center;justify-content:center;font-size:48px;color:#fff;">
+                    {{ artist.displayName|first|upper }}
+                </div>
+            {% endif %}
+
+            <div style="flex:1;min-width:280px;">
+                <h1 style="margin:0 0 8px;letter-spacing:1px;">{{ artist.displayName }}</h1>
+                <p style="color:#888;margin:0 0 16px;">
+                    {{ articles|length }} œuvre{{ articles|length > 1 ? 's' : '' }}
+                    {% if artist.createdAt %}
+                        · Inscrit depuis {{ artist.createdAt|date('m/Y') }}
+                    {% endif %}
+                </p>
+                {% if artist.bio %}
+                    <p style="color:#444;line-height:1.6;margin:0 0 16px;">{{ artist.bio|nl2br }}</p>
+                {% endif %}
+
+                <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:#666;">
+                    {% if artist.social %}
+                        <span><i class="fas fa-at"></i> {{ artist.social }}</span>
+                    {% endif %}
+                    {% if artist.email %}
+                        <span><i class="far fa-envelope"></i> {{ artist.email }}</span>
+                    {% endif %}
+                    {% if artist.phone %}
+                        <span><i class="fas fa-phone"></i> {{ artist.phone }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        {# Œuvres de l'artiste #}
+        <section>
+            <h2 style="font-size:18px;letter-spacing:2px;color:#406f76;margin-bottom:24px;">
+                LES ŒUVRES DE L'ARTISTE
+            </h2>
+
+            {% if articles|length == 0 %}
+                <p style="text-align:center;color:#888;padding:60px 20px;background:#f9f9f9;border-radius:8px;">
+                    Cet artiste n'a pas encore publié d'œuvre.
+                </p>
+            {% else %}
+                <div class="article-cards" style="margin-top:0;">
+                    {% for article in articles %}
+                        {% include 'components/_article_card.html.twig' with {article: article} %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+    </main>
+{% endblock %}

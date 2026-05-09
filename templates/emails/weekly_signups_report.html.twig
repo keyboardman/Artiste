@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscriptions de la semaine</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;color:#333;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4f4f4;padding:40px 0;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="640" cellspacing="0" cellpadding="0" style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                    <tr>
+                        <td style="background:#000;padding:24px;text-align:center;">
+                            <h1 style="color:#fff;margin:0;font-size:22px;letter-spacing:2px;">PLACEAUPRO — RAPPORT HEBDOMADAIRE</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:32px;">
+                            <h2 style="margin-top:0;color:#222;">Inscriptions de la semaine</h2>
+                            <p style="color:#666;font-size:14px;">
+                                Du <strong>{{ since|date('d/m/Y à H:i') }}</strong>
+                                au <strong>{{ generatedAt|date('d/m/Y à H:i') }}</strong>.
+                            </p>
+
+                            <div style="background:#f8f8f8;border-left:4px solid #000;padding:20px;margin:24px 0;">
+                                <p style="margin:0;font-size:32px;font-weight:bold;color:#000;">
+                                    {{ count }}
+                                </p>
+                                <p style="margin:4px 0 0;color:#666;">
+                                    {% if count == 0 %}
+                                        Aucune nouvelle inscription cette semaine.
+                                    {% elseif count == 1 %}
+                                        nouvelle inscription
+                                    {% else %}
+                                        nouvelles inscriptions
+                                    {% endif %}
+                                </p>
+                            </div>
+
+                            {% if count > 0 %}
+                                <h3 style="color:#222;margin-top:32px;">Liste des nouveaux comptes</h3>
+                                <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+                                    <thead>
+                                        <tr style="background:#fafafa;">
+                                            <th style="padding:10px;text-align:left;font-size:13px;color:#888;border-bottom:1px solid #eee;">#</th>
+                                            <th style="padding:10px;text-align:left;font-size:13px;color:#888;border-bottom:1px solid #eee;">Nom</th>
+                                            <th style="padding:10px;text-align:left;font-size:13px;color:#888;border-bottom:1px solid #eee;">Email</th>
+                                            <th style="padding:10px;text-align:left;font-size:13px;color:#888;border-bottom:1px solid #eee;">Vérifié</th>
+                                            <th style="padding:10px;text-align:left;font-size:13px;color:#888;border-bottom:1px solid #eee;">Inscrit le</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for user in newUsers %}
+                                            <tr>
+                                                <td style="padding:10px;border-bottom:1px solid #f4f4f4;font-size:13px;color:#999;">{{ loop.index }}</td>
+                                                <td style="padding:10px;border-bottom:1px solid #f4f4f4;font-size:14px;">
+                                                    <strong>{{ user.displayName }}</strong>
+                                                </td>
+                                                <td style="padding:10px;border-bottom:1px solid #f4f4f4;font-size:13px;color:#444;">
+                                                    {{ user.email }}
+                                                </td>
+                                                <td style="padding:10px;border-bottom:1px solid #f4f4f4;font-size:13px;">
+                                                    {% if user.isVerified %}
+                                                        <span style="color:#27ae60;">✓ Oui</span>
+                                                    {% else %}
+                                                        <span style="color:#c0392b;">✗ Non</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td style="padding:10px;border-bottom:1px solid #f4f4f4;font-size:13px;color:#666;">
+                                                    {{ user.createdAt|date('d/m/Y H:i') }}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+
+                            <hr style="border:none;border-top:1px solid #eee;margin:32px 0;">
+                            <p style="font-size:12px;color:#999;">
+                                Email automatique généré le {{ generatedAt|date('d/m/Y à H:i') }}.
+                                Vous recevez ce message en tant qu'administrateur de Placeaupro.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background:#fafafa;padding:16px;text-align:center;font-size:12px;color:#999;">
+                            © {{ "now"|date("Y") }} Placeaupro
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

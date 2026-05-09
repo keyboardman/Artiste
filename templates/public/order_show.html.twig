@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande #{{ order.reference|default(order.id) }} - Placeaupro{% endblock %}
+
+{% block body_class %}order-show-page{% endblock %}
+
+{% block nav_style %}white{% endblock %}
+
+{% block content %}
+    <main style="max-width:900px;margin:120px auto 60px;padding:0 20px;">
+        <a href="{{ path('app_orders') }}" style="color:#666;text-decoration:none;font-size:13px;">← Retour à mes commandes</a>
+
+        <h1 style="margin:16px 0 8px;letter-spacing:2px;">COMMANDE #{{ order.reference|default(order.id) }}</h1>
+        <p style="color:#888;margin-bottom:30px;">Passée le {{ order.createdAt|date('d/m/Y à H:i') }}</p>
+
+        <div style="margin-bottom:24px;">
+            {% set color = {
+                'pending': '#888',
+                'paid': '#3498db',
+                'shipped': '#2980b9',
+                'delivered': '#27ae60',
+                'cancelled': '#c0392b'
+            } %}
+            <span style="display:inline-block;padding:8px 18px;border-radius:20px;color:#fff;font-size:13px;letter-spacing:1px;background:{{ color[order.status.value] }};">
+                {{ order.status.label|upper }}
+            </span>
+        </div>
+
+        <table style="width:100%;border-collapse:collapse;">
+            <thead>
+                <tr style="border-bottom:1px solid #ddd;">
+                    <th style="padding:16px 8px;text-align:left;">Article</th>
+                    <th style="padding:16px 8px;text-align:center;">Prix</th>
+                    <th style="padding:16px 8px;text-align:center;">Qté</th>
+                    <th style="padding:16px 8px;text-align:right;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items %}
+                    <tr style="border-bottom:1px solid #eee;">
+                        <td style="padding:16px 8px;display:flex;align-items:center;gap:14px;">
+                            {% if item.image %}
+                                <img src="{{ asset(item.image) }}" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:4px;">
+                            {% endif %}
+                            <span>{{ item.title }}</span>
+                        </td>
+                        <td style="padding:16px 8px;text-align:center;">{{ item.unitPrice|number_format(2, ',', ' ') }} €</td>
+                        <td style="padding:16px 8px;text-align:center;">{{ item.quantity }}</td>
+                        <td style="padding:16px 8px;text-align:right;font-weight:bold;">{{ item.lineTotal|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" style="padding:24px 8px;text-align:right;font-size:18px;">TOTAL</td>
+                    <td style="padding:24px 8px;text-align:right;font-size:20px;font-weight:bold;">
+                        {{ order.total|number_format(2, ',', ' ') }} €
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </main>
+{% endblock %}

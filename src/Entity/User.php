@@ -36,6 +36,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 )]
 #[ApiFilter(OrderFilter::class, properties: ['id'])]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'Un compte existe déjà avec cet email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -80,8 +81,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $avatar = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    #[Groups(['user:read', 'user:write'])]
+    #[Groups(['user:read', 'user:write', 'article:read'])]
     private ?string $bio = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(['user:read', 'user:write', 'article:read'])]
+    private ?string $social = null;
+
+    #[ORM\Column(length: 30, nullable: true)]
+    #[Groups(['user:read', 'user:write', 'article:read'])]
+    private ?string $phone = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    #[Groups(['user:read'])]
+    private bool $isVerified = false;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $verificationToken = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $passwordResetToken = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $passwordResetExpiresAt = null;
+
+    #[ORM\Column]
+    #[Groups(['user:read'])]
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[Groups(['user:write'])]
     private ?string $plainPassword = null;
@@ -232,6 +258,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getSocial(): ?string
+    {
+        return $this->social;
+    }
+
+    public function setSocial(?string $social): static
+    {
+        $this->social = $social;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): static
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
     public function getPlainPassword(): ?string
     {
         return $this->plainPassword;
@@ -242,6 +292,83 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->plainPassword = $plainPassword;
 
         return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getVerificationToken(): ?string
+    {
+        return $this->verificationToken;
+    }
+
+    public function setVerificationToken(?string $verificationToken): static
+    {
+        $this->verificationToken = $verificationToken;
+
+        return $this;
+    }
+
+    public function getPasswordResetToken(): ?string
+    {
+        return $this->passwordResetToken;
+    }
+
+    public function setPasswordResetToken(?string $passwordResetToken): static
+    {
+        $this->passwordResetToken = $passwordResetToken;
+
+        return $this;
+    }
+
+    public function getPasswordResetExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->passwordResetExpiresAt;
+    }
+
+    public function setPasswordResetExpiresAt(?\DateTimeImmutable $passwordResetExpiresAt): static
+    {
+        $this->passwordResetExpiresAt = $passwordResetExpiresAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function initCreatedAt(): void
+    {
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getDisplayName(): string
+    {
+        $name = trim(($this->firstname ?? '') . ' ' . ($this->lastname ?? ''));
+        if ($name !== '') {
+            return $name;
+        }
+        return $this->username ?? $this->email ?? '';
     }
 
     /**

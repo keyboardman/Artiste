@@ -21,14 +21,15 @@
     <nav class="main-nav-w profile-nav" style="background-color: transparent">
         <div class="logo-w"><a href="{{ path('app_home') }}">LOGO</a></div>
         <div class="nav-input-w">
-            <div class="search">
+            <form class="search" action="{{ path('app_search') }}" method="get" role="search">
                 <input
-                    type="text"
+                    type="search"
+                    name="q"
                     placeholder=" Rechercher"
                     class="search-input"
                     style="background-color: transparent"
                 />
-            </div>
+            </form>
         </div>
         <div class="nav-links-w">
             <a href="{{ path('app_shop') }}">SHOP</a>
@@ -41,6 +42,13 @@
                     alt="Notification"
                     class="bell-icon"
                 />
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_admin_dashboard') }}" class="account-link" title="Administration">
+                        <div class="account-icon-w">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                        </div>
+                    </a>
+                {% endif %}
                 {% if app.user %}
                     <a href="{{ path('app_profile') }}" class="account-link">
                         {% if app.user.avatar %}

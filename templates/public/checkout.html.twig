@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commander - Placeaupro{% endblock %}
+
+{% block body_class %}checkout-page{% endblock %}
+
+{% block nav_style %}white{% endblock %}
+
+{% block content %}
+    <main style="max-width:800px;margin:120px auto 60px;padding:0 20px;">
+        <h1 style="margin-bottom:30px;letter-spacing:2px;">FINALISER MA COMMANDE</h1>
+
+        <div style="background:#f9f9f9;padding:24px;border-radius:8px;margin-bottom:24px;">
+            <h3 style="margin-top:0;">Récapitulatif</h3>
+            <table style="width:100%;border-collapse:collapse;">
+                {% for item in cart.items %}
+                    <tr style="border-bottom:1px solid #eee;">
+                        <td style="padding:12px 0;">{{ item.name }} <span style="color:#888;">× {{ item.quantity }}</span></td>
+                        <td style="padding:12px 0;text-align:right;">{{ (item.price * item.quantity)|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td style="padding:12px 0;">Sous-total</td>
+                    <td style="padding:12px 0;text-align:right;">{{ cart.total|number_format(2, ',', ' ') }} €</td>
+                </tr>
+                <tr>
+                    <td style="padding:12px 0;">Frais de port</td>
+                    <td style="padding:12px 0;text-align:right;">{{ shipping_fee|number_format(2, ',', ' ') }} €</td>
+                </tr>
+                <tr style="border-top:2px solid #000;">
+                    <td style="padding:16px 0;font-weight:bold;font-size:18px;">TOTAL</td>
+                    <td style="padding:16px 0;text-align:right;font-weight:bold;font-size:18px;">
+                        {{ grand_total|number_format(2, ',', ' ') }} €
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="background:#fff3cd;color:#856404;padding:16px;border-radius:6px;margin-bottom:24px;">
+            ⚠ Mode démonstration : aucun paiement réel ne sera effectué. La commande sera créée avec le statut "payée".
+        </div>
+
+        <form method="post" action="{{ path('app_checkout') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('checkout') }}">
+
+            <div style="display:flex;gap:16px;justify-content:space-between;">
+                <a href="{{ path('app_cart') }}"
+                   style="padding:14px 32px;background:#fff;color:#000;text-decoration:none;letter-spacing:1px;border:1px solid #000;">
+                    RETOUR AU PANIER
+                </a>
+                <button type="submit"
+                        style="padding:14px 32px;background:#000;color:#fff;border:none;letter-spacing:1px;cursor:pointer;font-size:14px;">
+                    CONFIRMER LA COMMANDE
+                </button>
+            </div>
+        </form>
+    </main>
+{% endblock %}

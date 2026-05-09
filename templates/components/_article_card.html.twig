@@ -10,5 +10,9 @@
     <img src="{{ asset(article.image) }}" alt="{{ article.title }}">
     <h4>{{ article.title|upper }}</h4>
     <p>{{ article.description }}</p>
-    <span class="article-card-btn">AJOUTER AU PANIER</span>
+    <button type="button"
+            class="article-card-btn"
+            data-add-cart="{{ path('app_cart_add', {id: article.id}) }}">
+        AJOUTER AU PANIER
+    </button>
 </a>

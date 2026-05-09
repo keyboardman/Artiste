@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes commandes - Placeaupro{% endblock %}
+
+{% block body_class %}orders-page{% endblock %}
+
+{% block nav_style %}white{% endblock %}
+
+{% block content %}
+    <main style="max-width:1000px;margin:120px auto 60px;padding:0 20px;">
+        <h1 style="margin-bottom:30px;letter-spacing:2px;">MES COMMANDES</h1>
+
+        {% if orders|length == 0 %}
+            <div style="text-align:center;padding:60px 20px;background:#f9f9f9;border-radius:8px;">
+                <p style="font-size:18px;color:#666;margin-bottom:24px;">Vous n'avez pas encore de commande</p>
+                <a href="{{ path('app_shop') }}"
+                   style="display:inline-block;padding:14px 32px;background:#000;color:#fff;text-decoration:none;letter-spacing:1px;">
+                    EXPLORER NOS PRODUITS
+                </a>
+            </div>
+        {% else %}
+            {% for order in orders %}
+                <div style="border:1px solid #eee;border-radius:8px;padding:20px;margin-bottom:16px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+                        <div>
+                            <strong>Commande #{{ order.reference|default(order.id) }}</strong><br>
+                            <span style="color:#888;font-size:13px;">{{ order.createdAt|date('d/m/Y à H:i') }}</span>
+                        </div>
+                        <div>
+                            {% set color = {
+                                'pending': '#888',
+                                'paid': '#3498db',
+                                'shipped': '#2980b9',
+                                'delivered': '#27ae60',
+                                'cancelled': '#c0392b'
+                            } %}
+                            <span style="display:inline-block;padding:6px 14px;border-radius:20px;color:#fff;font-size:12px;letter-spacing:1px;background:{{ color[order.status.value] }};">
+                                {{ order.status.label|upper }}
+                            </span>
+                        </div>
+                        <div style="font-size:18px;font-weight:bold;">
+                            {{ order.total|number_format(2, ',', ' ') }} €
+                        </div>
+                        <a href="{{ path('app_order_show', {id: order.id}) }}"
+                           style="padding:10px 20px;background:#000;color:#fff;text-decoration:none;font-size:13px;letter-spacing:1px;">
+                            VOIR
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </main>
+{% endblock %}

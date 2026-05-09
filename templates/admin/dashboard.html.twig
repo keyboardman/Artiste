@@ -4,7 +4,7 @@
 {% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
-    {# Statistiques #}
+    {# Statistiques principales #}
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="stat-card">
@@ -13,9 +13,7 @@
                         <h6 class="text-muted mb-2">Utilisateurs</h6>
                         <h2 class="mb-0">{{ stats.users }}</h2>
                     </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-users text-primary"></i>
-                    </div>
+                    <div class="stat-icon"><i class="fas fa-users text-primary"></i></div>
                 </div>
             </div>
         </div>
@@ -26,9 +24,7 @@
                         <h6 class="text-muted mb-2">Articles</h6>
                         <h2 class="mb-0">{{ stats.articles }}</h2>
                     </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-shopping-bag text-success"></i>
-                    </div>
+                    <div class="stat-icon"><i class="fas fa-shopping-bag text-success"></i></div>
                 </div>
             </div>
         </div>
@@ -37,11 +33,9 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="text-muted mb-2">Commandes</h6>
-                        <h2 class="mb-0">0</h2>
+                        <h2 class="mb-0">{{ stats.orders }}</h2>
                     </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-receipt text-warning"></i>
-                    </div>
+                    <div class="stat-icon"><i class="fas fa-receipt text-warning"></i></div>
                 </div>
             </div>
         </div>
@@ -50,11 +44,118 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="text-muted mb-2">Revenus</h6>
-                        <h2 class="mb-0">0€</h2>
+                        <h2 class="mb-0">{{ stats.revenue|number_format(2, ',', ' ') }} €</h2>
                     </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-euro-sign text-info"></i>
+                    <div class="stat-icon"><i class="fas fa-euro-sign text-info"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Statistiques par statut de commande #}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header"><h5 class="mb-0">Commandes par statut</h5></div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col">
+                            <span class="badge bg-secondary fs-6">{{ stats.pending }}</span>
+                            <p class="text-muted mt-2 mb-0">En attente</p>
+                        </div>
+                        <div class="col">
+                            <span class="badge bg-info fs-6">{{ stats.paid }}</span>
+                            <p class="text-muted mt-2 mb-0">Payées</p>
+                        </div>
+                        <div class="col">
+                            <span class="badge bg-primary fs-6">{{ stats.shipped }}</span>
+                            <p class="text-muted mt-2 mb-0">Expédiées</p>
+                        </div>
+                        <div class="col">
+                            <span class="badge bg-success fs-6">{{ stats.delivered }}</span>
+                            <p class="text-muted mt-2 mb-0">Livrées</p>
+                        </div>
+                        <div class="col">
+                            <span class="badge bg-danger fs-6">{{ stats.cancelled }}</span>
+                            <p class="text-muted mt-2 mb-0">Annulées</p>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {# Commandes récentes #}
+        <div class="col-md-7 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Commandes récentes</h5>
+                    <a href="{{ path('app_admin_orders') }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-list"></i> Voir toutes
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Réf.</th>
+                                <th>Client</th>
+                                <th>Total</th>
+                                <th>Statut</th>
+                                <th>Date</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in stats.recent_orders %}
+                                <tr>
+                                    <td><code>{{ order.reference|default('—') }}</code></td>
+                                    <td>{{ order.user.email }}</td>
+                                    <td>{{ order.total|number_format(2, ',', ' ') }} €</td>
+                                    <td><span class="badge {{ order.status.badgeClass }}">{{ order.status.label }}</span></td>
+                                    <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+                                    <td><a href="{{ path('app_admin_order_show', {id: order.id}) }}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a></td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="6" class="text-center text-muted py-3">Aucune commande</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {# Top articles #}
+        <div class="col-md-5 mb-4">
+            <div class="card h-100">
+                <div class="card-header"><h5 class="mb-0">Top 5 produits</h5></div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Article</th>
+                                <th class="text-center">Vendus</th>
+                                <th class="text-end">Revenu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for top in stats.top_articles %}
+                                <tr>
+                                    <td>
+                                        {% if top.image %}
+                                            <img src="{{ asset(top.image) }}" alt="" style="width:32px;height:32px;object-fit:cover;border-radius:4px;" class="me-2">
+                                        {% endif %}
+                                        {{ top.title }}
+                                    </td>
+                                    <td class="text-center">{{ top.totalQty }}</td>
+                                    <td class="text-end">{{ top.totalRevenue|number_format(2, ',', ' ') }} €</td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="3" class="text-center text-muted py-3">Aucune vente</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -71,51 +172,30 @@
                     </a>
                 </div>
                 <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr><th>ID</th><th>Email</th><th>Nom</th><th>Rôles</th><th></th></tr>
+                        </thead>
+                        <tbody>
+                            {% for user in stats.recent_users %}
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Email</th>
-                                    <th>Nom</th>
-                                    <th>Nom d'utilisateur</th>
-                                    <th>Rôles</th>
-                                    <th>Actions</th>
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.firstname }} {{ user.lastname }}</td>
+                                    <td>
+                                        {% for role in user.roles %}
+                                            <span class="badge bg-{{ role == 'ROLE_ADMIN' ? 'danger' : 'secondary' }}">{{ role }}</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('app_admin_user_show', {id: user.id}) }}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {% for user in stats.recent_users %}
-                                    <tr>
-                                        <td>{{ user.id }}</td>
-                                        <td>{{ user.email }}</td>
-                                        <td>{{ user.firstname }} {{ user.lastname }}</td>
-                                        <td>{{ user.username ?? '-' }}</td>
-                                        <td>
-                                            {% for role in user.roles %}
-                                                <span class="badge bg-{{ role == 'ROLE_ADMIN' ? 'danger' : 'secondary' }}">
-                                                    {{ role }}
-                                                </span>
-                                            {% endfor %}
-                                        </td>
-                                        <td>
-                                            <a href="{{ path('app_admin_user_show', {id: user.id}) }}" class="btn btn-sm btn-info">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="{{ path('app_admin_user_edit', {id: user.id}) }}" class="btn btn-sm btn-warning">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                {% else %}
-                                    <tr>
-                                        <td colspan="6" class="text-center text-muted py-4">
-                                            Aucun utilisateur trouvé
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                            {% else %}
+                                <tr><td colspan="5" class="text-center text-muted py-3">Aucun utilisateur</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

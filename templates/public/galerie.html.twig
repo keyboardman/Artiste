@@ -23,9 +23,11 @@
     <section class="galerie">
         <div class="masonry">
             {% for article in articles %}
-                <div class="item" data-category="{{ article.category|lower|replace({' ': '-'}) }}">
+                <a href="{{ path('app_article_show', {id: article.id}) }}"
+                   class="item"
+                   data-category="{{ article.category|lower|replace({' ': '-'}) }}">
                     <img src="{{ article.image|imagine_filter('galerie_thumb') }}" alt="{{ article.title }}" loading="lazy" />
-                </div>
+                </a>
             {% else %}
                 <p class="galerie-empty">Aucune œuvre disponible pour le moment.</p>
             {% endfor %}

@@ -79,6 +79,13 @@
                 {# Token CSRF avec le nom attendu par form_login #}
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
+                <div style="text-align:right;margin:8px 0 16px;">
+                    <a href="{{ path('app_forgot_password') }}"
+                       style="color:#666;font-size:13px;text-decoration:underline;">
+                        Mot de passe oublié ?
+                    </a>
+                </div>
+
                 <div class="login-actions">
                     <button type="submit" class="login-button login-button--secondary">
                         CONNEXION

@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon panier - Placeaupro{% endblock %}
+
+{% block body_class %}cart-page{% endblock %}
+
+{% block nav_style %}white{% endblock %}
+
+{% block content %}
+    <main style="max-width:900px;margin:120px auto 60px;padding:0 20px;">
+        <h1 style="margin-bottom:30px;letter-spacing:2px;">MON PANIER</h1>
+
+        {% if cart.items|length == 0 %}
+            <div style="text-align:center;padding:60px 20px;background:#f9f9f9;border-radius:8px;">
+                <p style="font-size:18px;color:#666;margin-bottom:24px;">Votre panier est vide</p>
+                <a href="{{ path('app_shop') }}"
+                   style="display:inline-block;padding:14px 32px;background:#000;color:#fff;text-decoration:none;letter-spacing:1px;">
+                    EXPLORER NOS PRODUITS
+                </a>
+            </div>
+        {% else %}
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="border-bottom:1px solid #ddd;">
+                        <th style="padding:16px;text-align:left;">Article</th>
+                        <th style="padding:16px;text-align:center;">Qté</th>
+                        <th style="padding:16px;text-align:right;">Prix unitaire</th>
+                        <th style="padding:16px;text-align:right;">Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart.items %}
+                        <tr style="border-bottom:1px solid #eee;">
+                            <td style="padding:16px;display:flex;align-items:center;gap:16px;">
+                                <img src="{{ asset(item.image) }}" alt="{{ item.name }}"
+                                     style="width:64px;height:64px;object-fit:cover;border-radius:4px;">
+                                <span>{{ item.name }}</span>
+                            </td>
+                            <td style="padding:16px;text-align:center;">{{ item.quantity }}</td>
+                            <td style="padding:16px;text-align:right;">{{ item.price|number_format(2, ',', ' ') }} €</td>
+                            <td style="padding:16px;text-align:right;font-weight:bold;">
+                                {{ (item.price * item.quantity)|number_format(2, ',', ' ') }} €
+                            </td>
+                            <td style="padding:16px;">
+                                <form method="post" action="{{ path('app_cart_remove', {id: item.id}) }}">
+                                    <button type="submit" style="background:none;border:none;color:#c0392b;font-size:18px;cursor:pointer;">✕</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" style="padding:24px 16px;text-align:right;font-size:18px;">TOTAL</td>
+                        <td style="padding:24px 16px;text-align:right;font-size:20px;font-weight:bold;">
+                            {{ cart.total|number_format(2, ',', ' ') }} €
+                        </td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div style="margin-top:32px;display:flex;justify-content:space-between;gap:16px;">
+                <a href="{{ path('app_shop') }}"
+                   style="padding:14px 32px;background:#fff;color:#000;text-decoration:none;letter-spacing:1px;border:1px solid #000;">
+                    CONTINUER MES ACHATS
+                </a>
+                <a href="{{ path('app_checkout') }}"
+                   style="padding:14px 32px;background:#000;color:#fff;text-decoration:none;letter-spacing:1px;">
+                    PASSER COMMANDE
+                </a>
+            </div>
+        {% endif %}
+    </main>
+{% endblock %}

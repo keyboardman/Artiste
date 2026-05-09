@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation de commande</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;color:#333;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4f4f4;padding:40px 0;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                    <tr>
+                        <td style="background:#000;padding:24px;text-align:center;">
+                            <h1 style="color:#fff;margin:0;font-size:24px;letter-spacing:2px;">PLACEAUPRO</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:32px;">
+                            <h2 style="margin-top:0;color:#222;">Merci pour votre commande{% if order.user.firstname %}, {{ order.user.firstname }}{% endif %} !</h2>
+                            <p>Votre commande a bien été enregistrée. Voici le récapitulatif :</p>
+
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:24px 0;border-collapse:collapse;">
+                                <thead>
+                                    <tr style="background:#f8f8f8;">
+                                        <th style="padding:10px 12px;text-align:left;font-size:13px;color:#555;border-bottom:2px solid #eee;">Œuvre</th>
+                                        <th style="padding:10px 12px;text-align:center;font-size:13px;color:#555;border-bottom:2px solid #eee;">Qté</th>
+                                        <th style="padding:10px 12px;text-align:right;font-size:13px;color:#555;border-bottom:2px solid #eee;">Prix unitaire</th>
+                                        <th style="padding:10px 12px;text-align:right;font-size:13px;color:#555;border-bottom:2px solid #eee;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order.items %}
+                                    <tr>
+                                        <td style="padding:12px;border-bottom:1px solid #f0f0f0;font-size:14px;">{{ item.title }}</td>
+                                        <td style="padding:12px;border-bottom:1px solid #f0f0f0;font-size:14px;text-align:center;">{{ item.quantity }}</td>
+                                        <td style="padding:12px;border-bottom:1px solid #f0f0f0;font-size:14px;text-align:right;">{{ item.unitPrice|number_format(2, ',', ' ') }} €</td>
+                                        <td style="padding:12px;border-bottom:1px solid #f0f0f0;font-size:14px;text-align:right;">{{ item.lineTotal|number_format(2, ',', ' ') }} €</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" style="padding:14px 12px;text-align:right;font-weight:bold;font-size:15px;">Total</td>
+                                        <td style="padding:14px 12px;text-align:right;font-weight:bold;font-size:15px;">{{ order.total|number_format(2, ',', ' ') }} €</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                            <table role="presentation" cellspacing="0" cellpadding="0" style="margin-bottom:8px;">
+                                <tr>
+                                    <td style="font-size:13px;color:#666;padding-right:8px;">Référence :</td>
+                                    <td style="font-size:13px;font-weight:bold;">#{{ order.reference }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size:13px;color:#666;padding-right:8px;">Date :</td>
+                                    <td style="font-size:13px;">{{ order.createdAt|date('d/m/Y à H:i') }}</td>
+                                </tr>
+                            </table>
+
+                            <hr style="border:none;border-top:1px solid #eee;margin:32px 0;">
+                            <p style="font-size:12px;color:#999;">
+                                Pour toute question concernant votre commande, répondez à cet email en indiquant votre référence.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background:#fafafa;padding:16px;text-align:center;font-size:12px;color:#999;">
+                            © {{ "now"|date("Y") }} Placeaupro
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -43,7 +43,7 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/user/profile, roles: ROLE_USER }
         - { path: ^/user/orders, roles: ROLE_USER }
-        - { path: ^/checkout, roles: ROLE_USER }
+        - { path: ^/user/checkout, roles: ROLE_USER }
 
 when@test:
     security:

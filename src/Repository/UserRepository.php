@@ -16,28 +16,43 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    //    /**
-    //     * @return User[] Returns an array of User objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /** @return User[] */
+    public function findCreatedSince(\DateTimeImmutable $since): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.createdAt >= :since')
+            ->setParameter('since', $since)
+            ->orderBy('u.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?User
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /** @return User[] */
+    public function findAdmins(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.roles LIKE :role')
+            ->setParameter('role', '%ROLE_ADMIN%')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Recherche d'utilisateurs par mot-clé sur prénom, nom et pseudo.
+     * Volontairement n'inclut pas l'email pour éviter d'exposer ce champ via l'URL.
+     *
+     * @return User[]
+     */
+    public function findByKeyword(string $keyword, int $limit = 20): array
+    {
+        $like = '%' . addcslashes($keyword, '%_\\') . '%';
+
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.firstname LIKE :q OR u.lastname LIKE :q OR u.username LIKE :q')
+            ->setParameter('q', $like)
+            ->orderBy('u.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }

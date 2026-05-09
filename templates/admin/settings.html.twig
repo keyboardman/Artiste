@@ -1,0 +1,54 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Paramètres{% endblock %}
+{% block page_title %}Paramètres du site{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-body">
+            <form method="post" action="{{ path('app_admin_settings') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin_settings') }}">
+
+                <div class="mb-3">
+                    <label class="form-label">Nom du site</label>
+                    <input type="text" name="site_name" class="form-control"
+                           value="{{ settings.site_name|default('') }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email de contact</label>
+                    <input type="email" name="site_email" class="form-control"
+                           value="{{ settings.site_email|default('') }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description du site</label>
+                    <textarea name="site_description" class="form-control" rows="3">{{ settings.site_description|default('') }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Frais de port (€)</label>
+                    <input type="text" name="shipping_fee" class="form-control"
+                           value="{{ settings.shipping_fee|default('0') }}"
+                           pattern="^\d+([.,]\d{1,2})?$">
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="maintenance_mode" id="maintenance_mode"
+                           value="1" class="form-check-input"
+                           {{ settings.maintenance_mode == '1' ? 'checked' : '' }}>
+                    <label for="maintenance_mode" class="form-check-label">
+                        Mode maintenance
+                    </label>
+                    <small class="text-muted d-block">
+                        Le site affichera une page de maintenance pour les visiteurs (à activer manuellement côté front).
+                    </small>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

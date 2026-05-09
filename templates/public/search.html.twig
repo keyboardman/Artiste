@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche{% if q %} : {{ q }}{% endif %} - Placeaupro{% endblock %}
+
+{% block body_class %}search-page{% endblock %}
+
+{% block nav_style %}white{% endblock %}
+
+{% block responsive_css %}{% endblock %}
+
+{% block content %}
+    <main style="max-width:1200px;margin:0px auto 60px;padding:0 20px;">
+
+        {% if q == '' %}
+            <p style="text-align:center;color:#888;padding:60px 20px;">
+                Saisissez un mot-clé pour rechercher.
+            </p>
+        {% else %}
+            <h1 style="margin-bottom:8px;letter-spacing:1px;">
+                Résultats pour <span style="color:#406f76;">« {{ q }} »</span>
+            </h1>
+            <p style="color:#888;margin-bottom:40px;">
+                {{ articles|length }} œuvre{{ articles|length > 1 ? 's' : '' }}
+                · {{ artists|length }} artiste{{ artists|length > 1 ? 's' : '' }}
+            </p>
+
+            {% if articles|length == 0 and artists|length == 0 %}
+                <div style="text-align:center;padding:60px 20px;background:#f9f9f9;border-radius:8px;">
+                    <p style="font-size:18px;color:#666;margin-bottom:20px;">
+                        Aucun résultat ne correspond à votre recherche.
+                    </p>
+                    <a href="{{ path('app_shop') }}"
+                       style="display:inline-block;padding:12px 28px;background:#406f76;color:#fff;text-decoration:none;border-radius:30px;font-size:13px;letter-spacing:1px;">
+                        EXPLORER LA BOUTIQUE
+                    </a>
+                </div>
+            {% endif %}
+
+            {# Section artistes #}
+            {% if artists|length > 0 %}
+                <section style="margin-bottom:60px;">
+                    <h2 style="font-size:18px;letter-spacing:2px;color:#406f76;margin-bottom:20px;border-bottom:1px solid #eee;padding-bottom:10px;">
+                        ARTISTES
+                    </h2>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;">
+                        {% for artist in artists %}
+                            <a href="{{ path('app_profile', {artist: artist.username}) }}"
+                               style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px 16px;border:1px solid #eee;border-radius:12px;text-decoration:none;color:inherit;transition:transform .2s, box-shadow .2s;"
+                               onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 20px rgba(0,0,0,0.08)';"
+                               onmouseout="this.style.transform='';this.style.boxShadow='';">
+                                {% if artist.avatar %}
+                                    <img src="{{ asset(artist.avatar) }}" alt=""
+                                         style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:12px;">
+                                {% else %}
+                                    <div style="width:80px;height:80px;border-radius:50%;background:#c2d4d7;margin-bottom:12px;display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;">
+                                        {{ artist.displayName|first|upper }}
+                                    </div>
+                                {% endif %}
+                                <strong style="color:#406f76;">{{ artist.displayName }}</strong>
+                                <small style="color:#888;margin-top:4px;">
+                                    {{ artist.articles|length }} œuvre{{ artist.articles|length > 1 ? 's' : '' }}
+                                </small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
+            {# Section articles #}
+            {% if articles|length > 0 %}
+                <section>
+                    <h2 style="font-size:18px;letter-spacing:2px;color:#406f76;margin-bottom:20px;border-bottom:1px solid #eee;padding-bottom:10px;">
+                        ŒUVRES
+                    </h2>
+                    <div class="article-cards" style="margin-top:0;">
+                        {% for article in articles %}
+                            {% include 'components/_article_card.html.twig' with {article: article} %}
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+        {% endif %}
+    </main>
+{% endblock %}

@@ -20,12 +20,14 @@
     
     {# Barre de recherche #}
     <div class="{{ is_white ? 'nav-input-w' : 'nav-input' }}">
-        <div class="search">
-            <input type="text" 
-                   placeholder="Rechercher" 
+        <form class="search" action="{{ path('app_search') }}" method="get" role="search">
+            <input type="search"
+                   name="q"
+                   value="{{ app.request.query.get('q')|default('') }}"
+                   placeholder="Rechercher"
                    class="search-input"
                    {% if bg_transparent %}style="background-color: transparent;"{% endif %}>
-        </div>
+        </form>
     </div>
     
     {# Liens de navigation #}
@@ -37,6 +39,13 @@
         
         <div class="{{ is_white ? 'extra-nav-w' : 'extra-nav' }}">
             <img src="{{ asset('img/bell-svgrepo-com.svg') }}" alt="Notification" class="bell-icon">
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('app_admin_dashboard') }}" class="account-link" title="Administration">
+                    <div class="{{ is_white ? 'account-icon-w' : 'account-icon' }}">
+                        <i class="fa-solid fa-screwdriver-wrench"></i>
+                    </div>
+                </a>
+            {% endif %}
             {% if app.user %}
                 <a href="{{ path('app_profile') }}" class="account-link">
                     {% if app.user.avatar %}

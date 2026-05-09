@@ -9,33 +9,54 @@
 {% block content %}
     <section id="article">
         <div class="article-container">
-            <!-- IMAGE -->
+            {# IMAGE PRINCIPALE + GALERIE #}
             <div class="article-image">
-                <img src="{{ asset(article.image|default('img/article.jpg')) }}" alt="{{ article.title|default('Oeuvre') }}" />
+                {% set has_gallery = images|length > 1 %}
+
+                <img id="article-main-image"
+                     src="{{ asset(images[0]|default('img/article.jpg')) }}"
+                     alt="{{ article.title|default('Oeuvre') }}" />
+
+                {% if has_gallery %}
+                    <div class="article-image-thumbs"
+                         style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+                        {% for path in images %}
+                            <button type="button"
+                                    class="article-thumb {{ loop.first ? 'active' : '' }}"
+                                    data-image="{{ asset(path) }}"
+                                    style="width:60px;height:60px;border:2px solid {{ loop.first ? '#000' : 'transparent' }};padding:0;cursor:pointer;background:#fff;">
+                                <img src="{{ asset(path) }}"
+                                     alt="Vignette {{ loop.index }}"
+                                     style="width:100%;height:100%;object-fit:cover;display:block;">
+                            </button>
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
                 <div class="article-image-index">
-                    {% for i in 1..5 %}
+                    {% for i in 1..(images|length > 0 ? images|length : 1) %}
                         <span class="{% if loop.first %}active{% endif %}">{{ '%02d'|format(i) }}</span>
                     {% endfor %}
                 </div>
             </div>
 
-            <!-- TEXTE -->
+            {# TEXTE #}
             <div class="article-content">
                 <div class="article-description">
                     <h2 class="article-title">{{ article.title|default("NOM DE L'ŒUVRE")|upper }}</h2>
 
                     <p class="article-text">
-                        {{ article.description|default("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries.") }}
+                        {{ article.description|default("Aucune description pour cette œuvre.") }}
                     </p>
 
                     <hr />
 
                     <h3 class="article-subtitle">
-                        INFOS SUR L’ARTISTE
+                        INFOS SUR L'ARTISTE
 
                         <p class="article-text small">
-                            {{ article.artist_info|default("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text") }}
+                            {% if artist.name %}<strong>{{ artist.name }}</strong> — {% endif %}
+                            {{ artist.biography }}
                         </p>
                     </h3>
                 </div>
@@ -51,45 +72,70 @@
     <section id="artiste-banner">
         <div class="artiste-banner-container">
             <div class="artiste-banner-image">
-                <img src="{{ asset(artist.image|default('img/artiste.jpg')) }}" alt="Image de l'artiste" />
-                <span class="artiste-banner-image-label">PHOTO DE L’ARTISTE</span>
+                <img src="{{ asset(artist.image) }}" alt="Image de l'artiste" />
+                <span class="artiste-banner-image-label">
+                    {{ artist.name|default("PHOTO DE L'ARTISTE")|upper }}
+                </span>
             </div>
             <div class="artiste-banner-text">
                 <div class="artiste-banner-top">
                     <p class="artiste-banner-title">BIOGRAPHIE</p>
                 </div>
                 <div class="artiste-banner-center">
-                    <p>
-                        {{ artist.biography|default("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text.")|nl2br }}
-                    </p>
+                    <p>{{ artist.biography|nl2br }}</p>
                 </div>
                 <div class="artiste-banner-bottom">
                     <div class="artiste-banner-bottom-title">CONTACT</div>
                     <div class="artiste-banner-contact">
-                        <div>{{ artist.social|default('@Loremipsum') }}</div>
-                        <div>{{ artist.email|default("Mail de l'artiste") }}</div>
-                        <div>{{ artist.phone|default('Numéro de téléphone') }}</div>
+                        {% if artist.social %}<div>{{ artist.social }}</div>{% endif %}
+                        {% if artist.email %}<div>{{ artist.email }}</div>{% endif %}
+                        {% if artist.phone %}<div>{{ artist.phone }}</div>{% endif %}
+                        {% if not artist.social and not artist.email and not artist.phone %}
+                            <div style="color:#888;">Aucune information de contact</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
     <section id="articles">
         <div class="articles-content">
             <div class="article-cards">
                 {% for related in related_articles|default([]) %}
-                    {% include 'components/_article_card.html.twig' with {article: related, show_link: false} %}
+                    {% include 'components/_article_card.html.twig' with {article: {
+                        id: related.id,
+                        image: related.image,
+                        title: related.title,
+                        description: related.description
+                    }, show_link: false} %}
                 {% else %}
-                    {% for i in 8..11 %}
-                        <a href="{{ path('app_shop') }}" class="article-card">
-                            <img src="{{ asset('img/image' ~ i ~ '.png') }}" alt="Article {{ i + 1 }}">
-                            <h4>LOREM IPSUM</h4>
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting</p>
-                            <span class="article-card-btn">AJOUTER AU PANIER</span>
-                        </a>
-                    {% endfor %}
+                    <p style="text-align:center;color:#888;padding:40px;">
+                        Aucune autre œuvre pour le moment.
+                    </p>
                 {% endfor %}
             </div>
         </div>
     </section>
+
+    {% if images|length > 1 %}
+    <script>
+        (function () {
+            const main = document.getElementById('article-main-image');
+            const thumbs = document.querySelectorAll('.article-thumb');
+            const indexSpans = document.querySelectorAll('.article-image-index span');
+
+            thumbs.forEach((thumb, idx) => {
+                thumb.addEventListener('click', () => {
+                    main.src = thumb.dataset.image;
+                    thumbs.forEach(t => t.style.borderColor = 'transparent');
+                    thumb.style.borderColor = '#000';
+
+                    indexSpans.forEach(s => s.classList.remove('active'));
+                    indexSpans[idx]?.classList.add('active');
+                });
+            });
+        })();
+    </script>
+    {% endif %}
 {% endblock %}

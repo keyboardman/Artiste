@@ -7,6 +7,8 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ArticleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -55,14 +57,28 @@ class Article
     #[Groups(['article:read', 'article:write'])]
     private ?string $category = null;
 
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'articles')]
+    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[Groups(['article:read', 'article:write'])]
+    private ?Category $categoryEntity = null;
+
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: true)]
     #[Groups(['article:read', 'article:write'])]
     private ?User $user = null;
 
+    /**
+     * @var Collection<int, ArticleImage>
+     */
+    #[ORM\OneToMany(targetEntity: ArticleImage::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC', 'id' => 'ASC'])]
+    #[Groups(['article:read'])]
+    private Collection $images;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -154,6 +170,21 @@ class Article
         return $this;
     }
 
+    public function getCategoryEntity(): ?Category
+    {
+        return $this->categoryEntity;
+    }
+
+    public function setCategoryEntity(?Category $categoryEntity): static
+    {
+        $this->categoryEntity = $categoryEntity;
+        if ($categoryEntity) {
+            $this->category = $categoryEntity->getName();
+        }
+
+        return $this;
+    }
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -164,5 +195,51 @@ class Article
         $this->user = $user;
 
         return $this;
+    }
+
+    /** @return Collection<int, ArticleImage> */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(ArticleImage $image): static
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setArticle($this);
+        }
+        return $this;
+    }
+
+    public function removeImage(ArticleImage $image): static
+    {
+        if ($this->images->removeElement($image)) {
+            if ($image->getArticle() === $this) {
+                $image->setArticle(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Renvoie l'ensemble des chemins d'images : la principale (image) en premier,
+     * suivie des ArticleImage additionnelles.
+     *
+     * @return string[]
+     */
+    public function getAllImagePaths(): array
+    {
+        $paths = [];
+        if ($this->image) {
+            $paths[] = $this->image;
+        }
+        foreach ($this->images as $img) {
+            $path = $img->getPath();
+            if ($path && !in_array($path, $paths, true)) {
+                $paths[] = $path;
+            }
+        }
+        return $paths;
     }
 }

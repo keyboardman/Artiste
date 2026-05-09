@@ -2,8 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Category;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -41,19 +42,13 @@ class ArticleUploadType extends AbstractType
                 'required' => false,
                 'attr'     => ['placeholder' => 'Description (optionnel)'],
             ])
-            ->add('category', ChoiceType::class, [
-                'label'       => false,
-                'required'    => true,
-                'placeholder' => 'Catégorie',
-                'choices'     => [
-                    'Illustration'     => 'illustration',
-                    'Photographie'     => 'photographie',
-                    'Graphisme'        => 'graphisme',
-                    'Peinture'         => 'peinture',
-                    'Digital Painting' => 'digital-painting',
-                    'Motion Design'    => 'motion-design',
-                ],
-                'constraints' => [new NotBlank(message: 'La catégorie est requise.')],
+            ->add('category', EntityType::class, [
+                'label'        => false,
+                'required'     => true,
+                'placeholder'  => 'Catégorie',
+                'class'        => Category::class,
+                'choice_label' => 'name',
+                'constraints'  => [new NotBlank(message: 'La catégorie est requise.')],
             ])
             ->add('price', TextType::class, [
                 'label'    => false,
