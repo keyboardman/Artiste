@@ -55,7 +55,16 @@
                         INFOS SUR L'ARTISTE
 
                         <p class="article-text small">
-                            {% if artist.name %}<strong>{{ artist.name }}</strong> — {% endif %}
+                            {% if artist.name %}
+                                {% if artist.id %}
+                                    <a href="{{ path('app_artist_show', {id: artist.id}) }}"
+                                       class="article-artist-link">
+                                        <strong>{{ artist.name }}</strong>
+                                    </a> —
+                                {% else %}
+                                    <strong>{{ artist.name }}</strong> —
+                                {% endif %}
+                            {% endif %}
                             {{ artist.biography }}
                         </p>
                     </h3>
@@ -72,10 +81,19 @@
     <section id="artiste-banner">
         <div class="artiste-banner-container">
             <div class="artiste-banner-image">
-                <img src="{{ asset(artist.image) }}" alt="Image de l'artiste" />
-                <span class="artiste-banner-image-label">
-                    {{ artist.name|default("PHOTO DE L'ARTISTE")|upper }}
-                </span>
+                {% if artist.id %}
+                    <a href="{{ path('app_artist_show', {id: artist.id}) }}">
+                        <img src="{{ asset(artist.image) }}" alt="Image de l'artiste" />
+                        <span class="artiste-banner-image-label">
+                            {{ artist.name|default("PHOTO DE L'ARTISTE")|upper }}
+                        </span>
+                    </a>
+                {% else %}
+                    <img src="{{ asset(artist.image) }}" alt="Image de l'artiste" />
+                    <span class="artiste-banner-image-label">
+                        {{ artist.name|default("PHOTO DE L'ARTISTE")|upper }}
+                    </span>
+                {% endif %}
             </div>
             <div class="artiste-banner-text">
                 <div class="artiste-banner-top">

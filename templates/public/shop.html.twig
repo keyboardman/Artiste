@@ -55,4 +55,25 @@
             </div>
         </div>
     </section>
+
+    {# Pagination #}
+    {% if page_count|default(0) > 1 %}
+        <nav class="pagination" aria-label="Pagination du shop">
+            {% if current_page > 1 %}
+                <a href="{{ path('app_shop', {page: current_page - 1}) }}" class="pagination-link">&laquo; Précédent</a>
+            {% endif %}
+
+            {% for p in 1..page_count %}
+                {% if p == current_page %}
+                    <span class="pagination-link pagination-current">{{ p }}</span>
+                {% else %}
+                    <a href="{{ path('app_shop', {page: p}) }}" class="pagination-link">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if current_page < page_count %}
+                <a href="{{ path('app_shop', {page: current_page + 1}) }}" class="pagination-link">Suivant &raquo;</a>
+            {% endif %}
+        </nav>
+    {% endif %}
 {% endblock %}

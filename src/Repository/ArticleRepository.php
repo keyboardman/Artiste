@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Article;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,6 +22,22 @@ class ArticleRepository extends ServiceEntityRepository
      *
      * @return Article[]
      */
+    /**
+     * Retourne un Paginator d'articles ordonnés par date de création décroissante.
+     */
+    public function paginateLatest(int $page = 1, int $perPage = 12): Paginator
+    {
+        $page = max(1, $page);
+
+        $query = $this->createQueryBuilder('a')
+            ->orderBy('a.createdAt', 'DESC')
+            ->setFirstResult(($page - 1) * $perPage)
+            ->setMaxResults($perPage)
+            ->getQuery();
+
+        return new Paginator($query, fetchJoinCollection: false);
+    }
+
     public function findByKeyword(string $keyword, int $limit = 50): array
     {
         $like = '%' . addcslashes($keyword, '%_\\') . '%';

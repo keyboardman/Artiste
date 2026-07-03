@@ -2,13 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
 use App\Entity\User;
-use App\Form\ArticleUploadType;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\UserRepository;
-use App\Service\ApiClientService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,25 +20,32 @@ class PublicController extends AbstractController
     }
 
     #[Route('/shop', name: 'app_shop')]
-    public function shop(ApiClientService $api): Response
+    public function shop(Request $request, ArticleRepository $articleRepository): Response
     {
-        $articles = $api->getArticles();
+        $perPage = 12;
+        $page = max(1, (int) $request->query->get('page', 1));
+
+        $paginator = $articleRepository->paginateLatest($page, $perPage);
+        $articles  = iterator_to_array($paginator);
+        $total     = count($paginator);
+        $pageCount = (int) ceil($total / $perPage);
 
         return $this->render('public/shop.html.twig', [
             'articles_first_group'  => array_slice($articles, 0, 4),
             'articles_second_group' => array_slice($articles, 4, 4),
             'articles_third_group'  => array_slice($articles, 8, 4),
+            'current_page'          => $page,
+            'page_count'            => $pageCount,
+            'total_articles'        => $total,
         ]);
     }
 
     #[Route('/galerie', name: 'app_galerie')]
-    public function galerie(ApiClientService $api, CategoryRepository $categoryRepository): Response
+    public function galerie(ArticleRepository $articleRepository, CategoryRepository $categoryRepository): Response
     {
-        $articles = $api->getArticles(['order[createdAt]' => 'DESC']);
-
         return $this->render('public/galerie.html.twig', [
             'categories' => array_map(fn ($c) => $c->getName(), $categoryRepository->findAllOrdered()),
-            'articles'   => $articles,
+            'articles'   => $articleRepository->findBy([], ['createdAt' => 'DESC']),
         ]);
     }
 
@@ -63,6 +67,7 @@ class PublicController extends AbstractController
         $artistUser = $article->getUser();
 
         $artist = [
+            'id'        => $artistUser?->getId(),
             'image'     => $artistUser?->getAvatar() ?: 'img/artiste.jpg',
             'name'      => $artistUser?->getDisplayName() ?: '',
             'biography' => $artistUser?->getBio() ?: "Cet artiste n'a pas encore renseigné de biographie.",
@@ -84,35 +89,6 @@ class PublicController extends AbstractController
             'images'           => $article->getAllImagePaths(),
             'related_articles' => $related,
             'artist'           => $artist,
-        ]);
-    }
-
-    #[Route('/profile', name: 'app_profile')]
-    public function profile(Request $request, ApiClientService $api, UserRepository $userRepository): Response
-    {
-        $artistUsername = trim((string) $request->query->get('artist', ''));
-
-        if ($artistUsername !== '') {
-            $user = $userRepository->findOneBy(['username' => $artistUsername]);
-
-            if (!$user) {
-                throw $this->createNotFoundException('Artiste introuvable');
-            }
-        } else {
-            $user = $this->getUser();
-        }
-
-        $articles = $user ? $api->getArticlesByUser($user->getId()) : [];
-
-        $uploadForm = $this->createForm(ArticleUploadType::class, null, [
-            'action' => $this->generateUrl('app_article_upload'),
-            'method' => 'POST',
-        ]);
-
-        return $this->render('public/profile.html.twig', [
-            'user'       => $user,
-            'boards'     => $articles,
-            'uploadForm' => $uploadForm,
         ]);
     }
 

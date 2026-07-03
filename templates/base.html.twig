@@ -4,27 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Placeaupro{% endblock %}</title>
-    
+
     {# Google Fonts #}
     <link href="https://fonts.googleapis.com/css2?family=Julee&display=swap" rel="stylesheet">
-    
+
     {# Font Awesome #}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    {# Styles principaux #}
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-    
-    {# Styles responsives (optionnel par page) #}
-    {% block responsive_css %}
-        <link rel="stylesheet" href="{{ asset('css/responsiv.css') }}">
-    {% endblock %}
-    
+
+    {# Asset Mapper : CSS et JS de l'app sont gérés via importmap() en bas de page #}
+
     {# Styles additionnels par page #}
     {% block stylesheets %}{% endblock %}
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
-    
+
     {# ===== HEADER / NAVIGATION ===== #}
     {% block header %}
         <header class="{% block header_class %}achat-header{% endblock %}">
@@ -36,28 +30,20 @@
             {% endblock %}
         </header>
     {% endblock %}
-    
+
     {# ===== PANIER OVERLAY ===== #}
     {% block cart %}
         {% include 'components/_cart.html.twig' %}
     {% endblock %}
-    
+
     {# ===== MESSAGES FLASH ===== #}
     {% for type, messages in app.flashes(['success', 'error', 'warning', 'info']) %}
         {% for message in messages %}
-            <div class="flash-message flash-{{ type }}" style="
-                position: fixed; top: 80px; right: 20px; z-index: 9999;
-                padding: 12px 20px; border-radius: 8px; font-size: 14px;
-                background: {{ type == 'success' ? '#4caf50' : (type == 'error' ? '#f44336' : '#2196f3') }};
-                color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                animation: fadeOut 5s forwards;">
+            <div class="flash-message flash-{{ type }}">
                 {{ message }}
             </div>
         {% endfor %}
     {% endfor %}
-    <style>
-        @keyframes fadeOut { 0%{opacity:1} 80%{opacity:1} 100%{opacity:0;pointer-events:none} }
-    </style>
 
     {# ===== CONTENU PRINCIPAL ===== #}
     {% block body %}
@@ -65,15 +51,14 @@
             {% block content %}{% endblock %}
         </main>
     {% endblock %}
-    
+
     {# ===== FOOTER ===== #}
     {% block footer %}
         {% include 'components/_footer.html.twig' %}
     {% endblock %}
-    
-    {# ===== SCRIPTS ===== #}
+
+    {# ===== SCRIPTS (Asset Mapper) ===== #}
     {{ importmap('app') }}
-    <script src="{{ asset('js/scripts.js') }}" data-turbo-eval="false"></script>
     {% block javascripts %}{% endblock %}
 </body>
 </html>
