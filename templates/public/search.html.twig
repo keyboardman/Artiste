@@ -44,7 +44,7 @@
                     </h2>
                     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;">
                         {% for artist in artists %}
-                            <a href="{{ path('app_profile', {artist: artist.username}) }}"
+                            <a href="{{ path('app_artist_show', {id: artist.id}) }}"
                                style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px 16px;border:1px solid #eee;border-radius:12px;text-decoration:none;color:inherit;transition:transform .2s, box-shadow .2s;"
                                onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 20px rgba(0,0,0,0.08)';"
                                onmouseout="this.style.transform='';this.style.boxShadow='';">

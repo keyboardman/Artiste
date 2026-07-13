@@ -1,0 +1,56 @@
+@import './styles.css';
+@import './responsiv.css';
+
+/* Flash messages */
+.flash-message {
+    margin: 16px 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    animation: fadeOut 5s forwards;
+}
+
+.flash-message.flash-success { background: #4caf50; }
+.flash-message.flash-error   { background: #f44336; }
+.flash-message.flash-warning { background: #ff9800; }
+.flash-message.flash-info    { background: #2196f3; }
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 40px 20px;
+    flex-wrap: wrap;
+}
+
+.pagination-link {
+    display: inline-block;
+    padding: 8px 14px;
+    border: 1px solid #406f76;
+    border-radius: 6px;
+    color: #406f76;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.pagination-link:hover {
+    background: #406f76;
+    color: #fff;
+}
+
+.pagination-current {
+    background: #406f76;
+    color: #fff;
+    cursor: default;
+}
+
+@keyframes fadeOut {
+    0%   { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { opacity: 0; pointer-events: none; }
+}

@@ -32,10 +32,9 @@ class SecurityController extends AbstractController
             'email' => $lastUsername,
         ]);
 
-        return $this->render('public/login.html.twig', [
+        return $this->render('security/login.html.twig', [
             'loginForm' => $form,
             'error' => $error,
-            'registration_mode' => false,
         ]);
     }
 
@@ -89,9 +88,8 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('public/login.html.twig', [
+        return $this->render('security/register.html.twig', [
             'registrationForm' => $form,
-            'registration_mode' => true,
         ]);
     }
 

@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - Placeaupro{% endblock %}
+
+{% block body_class %}login-page{% endblock %}
+
+{# Navigation blanche #}
+{% block nav_style %}white{% endblock %}
+
+{# Pas de CSS responsive pour cette page #}
+{% block responsive_css %}{% endblock %}
+
+{% block content %}
+    <main class="login-main">
+        <div class="login-container">
+            {{ form_start(registrationForm, {'attr': {'class': 'login-form'}}) }}
+
+            {# Affichage des erreurs de formulaire #}
+            {{ form_errors(registrationForm) }}
+
+            {# Messages flash de succès #}
+            {% for message in app.flashes('success') %}
+                <div class="login-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {{ form_row(registrationForm.firstname) }}
+            {{ form_row(registrationForm.lastname) }}
+            {{ form_row(registrationForm.email) }}
+            {{ form_row(registrationForm.plainPassword.first) }}
+            {{ form_row(registrationForm.plainPassword.second) }}
+
+            <label class="login-terms">
+                {{ form_widget(registrationForm.agreeTerms) }}
+                <span>{{ form_label(registrationForm.agreeTerms) }}</span>
+            </label>
+            {{ form_errors(registrationForm.agreeTerms) }}
+
+            <div class="login-actions">
+                <a href="{{ path('app_login') }}" class="login-button login-button--secondary">
+                    CONNEXION
+                </a>
+                <button type="submit" class="login-button login-button--primary">
+                    CRÉER MON COMPTE
+                </button>
+            </div>
+
+            {{ form_end(registrationForm) }}
+        </div>
+    </main>
+{% endblock %}

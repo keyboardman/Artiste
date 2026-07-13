@@ -1,131 +1,56 @@
-<!doctype html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Placeaupro - Acceuil</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Julee&display=swap"
-        rel="stylesheet"
-    />
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
+{% extends 'base.html.twig' %}
 
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/responsiv.css') }}" />
-</head>
+{% block title %}Placeaupro - Accueil{% endblock %}
 
-<header>
-    <nav class="main-nav-w profile-nav" style="background-color: transparent">
-        <div class="logo-w"><a href="{{ path('app_home') }}">LOGO</a></div>
-        <div class="nav-input-w">
-            <form class="search" action="{{ path('app_search') }}" method="get" role="search">
-                <input
-                    type="search"
-                    name="q"
-                    placeholder=" Rechercher"
-                    class="search-input"
-                    style="background-color: transparent"
-                />
-            </form>
+{% block body_class %}home-page{% endblock %}
+
+{% block nav_style %}white{% endblock %}
+{% block nav_transparent %}true{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        body.home-page {
+            background-image: url("{{ asset('img/hero.png') }}");
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <section id="hero">
+        <div class="hero-content">
+            <h1>DESIGN</h1>
+            <p>
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the industry's standard dummy text ever
+                since the 1500s, when an unknown printer took a galley of type and
+                scrambled it to make a type specimen book. It has survived not only
+                five centuries
+            </p>
         </div>
-        <div class="nav-links-w">
-            <a href="{{ path('app_shop') }}">SHOP</a>
-            <a href="{{ path('app_galerie') }}">GALERIE</a>
-            <a href="{{ path('app_stories') }}">STORIES</a>
-            <a href="#" id="cart-btn">PANIER</a>
-            <div class="extra-nav-w">
-                <img
-                    src="{{ asset('img/bell-svgrepo-com.svg') }}"
-                    alt="Notification"
-                    class="bell-icon"
-                />
-                {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('app_admin_dashboard') }}" class="account-link" title="Administration">
-                        <div class="account-icon-w">
-                            <i class="fa-solid fa-screwdriver-wrench"></i>
-                        </div>
-                    </a>
-                {% endif %}
-                {% if app.user %}
-                    <a href="{{ path('app_profile') }}" class="account-link">
-                        {% if app.user.avatar %}
-                            <img src="{{ asset(app.user.avatar) }}"
-                                 alt="Photo de profil"
-                                 class="account-w account-avatar">
-                        {% else %}
-                            <div class="account-w profile-account"></div>
-                        {% endif %}
-                    </a>
-                {% else %}
-                    <a href="{{ path('app_login') }}" class="account-link">
-                        <div class="account-icon-w">
-                            <i class="fa-regular fa-user"></i>
-                        </div>
-                    </a>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
-</header>
-<div id="cart-overlay"></div>
+    </section>
 
-<div id="cart-panel">
-    <div class="cart-header">
-        <span>VOTRE PANIER</span>
-        <button id="close-cart">✕</button>
-    </div>
-
-    <div class="cart-content">
-        <div class="cart-empty">
-            <img src="{{ asset('img/cart-icon.png') }}" alt="Panier vide" />
-            <p>Votre panier est vide</p>
-            <a href="{{ path('app_shop') }}" class="cart-btn">EXPLORER NOS PRODUITS</a>
-        </div>
-    </div>
-</div>
-<body class="home-page" style='background-image: url("{{ asset('img/hero.png') }}");'>
-<section id="hero">
-    <div class="hero-content">
-        <h1>DESIGN</h1>
-        <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text ever
-            since the 1500s, when an unknown printer took a galley of type and
-            scrambled it to make a type specimen book. It has survived not only
-            five centuries
-        </p>
-    </div>
-</section>
-<section id="windows">
-    <div class="hero-content">
-        <div class="windows-container">
-            <div class="window-card">
-                <img class="window-frame" src="{{ asset('img/window.png') }}" alt="Fenêtre" />
-                <div class="window-content">
-                    <img src="{{ asset('img/image.png') }}" alt="Contenu 1" />
+    <section id="windows">
+        <div class="hero-content">
+            <div class="windows-container">
+                <div class="window-card">
+                    <img class="window-frame" src="{{ asset('img/window.png') }}" alt="Fenêtre" />
+                    <div class="window-content">
+                        <img src="{{ asset('img/image.png') }}" alt="Contenu 1" />
+                    </div>
                 </div>
-            </div>
-            <div class="window-card">
-                <img class="window-frame" src="{{ asset('img/window.png') }}" alt="Fenêtre" />
-                <div class="window-content">
-                    <img src="{{ asset('img/image.png') }}" alt="Contenu 2" />
+                <div class="window-card">
+                    <img class="window-frame" src="{{ asset('img/window.png') }}" alt="Fenêtre" />
+                    <div class="window-content">
+                        <img src="{{ asset('img/image.png') }}" alt="Contenu 2" />
+                    </div>
                 </div>
-            </div>
-            <div class="window-card">
-                <img class="window-frame" src="{{ asset('img/window.png') }}" alt="Fenêtre" />
-                <div class="window-content">
-                    <img src="{{ asset('img/image.png') }}" alt="Contenu 3" />
+                <div class="window-card">
+                    <img class="window-frame" src="{{ asset('img/window.png') }}" alt="Fenêtre" />
+                    <div class="window-content">
+                        <img src="{{ asset('img/image.png') }}" alt="Contenu 3" />
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-
-{% include 'components/_footer.html.twig' %}
-
-<script src="{{ asset('js/script.js') }}"></script>
-</body>
-</html>
+    </section>
+{% endblock %}

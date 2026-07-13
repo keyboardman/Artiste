@@ -86,7 +86,7 @@ function renderCart(cart) {
   totalDiv.appendChild(totalAmt);
 
   const link = document.createElement('a');
-  link.href = '/user/checkout';
+  link.href = '/cart/checkout';
   link.className = 'cart-btn';
   link.textContent = 'COMMANDER';
 
@@ -106,7 +106,7 @@ function addToCart(url) {
 }
 
 function removeFromCart(id) {
-  fetch('/user/cart/remove/' + id, {
+  fetch('/cart/remove/' + id, {
     method: 'POST',
     headers: { 'X-Requested-With': 'XMLHttpRequest' },
   })
